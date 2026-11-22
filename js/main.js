@@ -905,8 +905,35 @@ function copyEmailToClipboard(e) {
       if (submitBtn) {
         submitBtn.disabled = true;
       }
+    } else {
+      if (inputEl) {
+        inputEl.disabled = false;
+        inputEl.placeholder = 'Ask a question about Nikki...';
+      }
+      if (submitBtn) {
+        submitBtn.disabled = false;
+      }
     }
   }
+
+  // Secret developer reset: Triple-click avatar in chat header to reset counter
+  let avatarClicks = 0;
+  let avatarTimer = null;
+  window.resetAiCounterDev = function() {
+    avatarClicks++;
+    clearTimeout(avatarTimer);
+    avatarTimer = setTimeout(function() { avatarClicks = 0; }, 800);
+    if (avatarClicks >= 3) {
+      localStorage.removeItem(STORAGE_KEY);
+      updateCounterUI();
+      avatarClicks = 0;
+      const counterEl = document.getElementById('aiQueryCounter');
+      if (counterEl) {
+        counterEl.textContent = 'Counter reset! (2 remaining)';
+        setTimeout(function() { updateCounterUI(); }, 2000);
+      }
+    }
+  };
 
   window.toggleAiChat = function() {
     const win = document.getElementById('aiChatWindow');
