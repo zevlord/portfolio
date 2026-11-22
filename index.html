@@ -938,6 +938,76 @@ cursor.execute(<span style="color:#a8c97f;">"""
 <script src="js/main.js" defer></script>
 
 
+<!-- Floating AI Assistant Pop-up Widget -->
+<div id="aiChatWidget" class="ai-chat-widget">
+  <!-- Trigger Button -->
+  <button id="aiChatTrigger" class="ai-chat-trigger" onclick="toggleAiChat()" aria-label="Open Nikki's AI Assistant" title="Chat with Nikki's AI Assistant">
+    <span class="ai-trigger-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M12 2L14.4 7.6L20 10L14.4 12.4L12 18L9.6 12.4L4 10L9.6 7.6L12 2Z"/>
+      </svg>
+    </span>
+    <span class="ai-trigger-label">Ask Nikki's AI</span>
+    <span class="ai-trigger-status-dot" aria-hidden="true"></span>
+  </button>
+
+  <!-- Pop-up Window -->
+  <div id="aiChatWindow" class="ai-chat-window" aria-hidden="true" role="dialog" aria-label="Nikki's AI Assistant Dialog">
+    <div class="ai-chat-header">
+      <div class="ai-chat-header-info">
+        <div class="ai-avatar-badge">
+          <img src="assets/profile-picture.jpg" alt="Nikki Avatar" class="ai-avatar-img">
+          <span class="ai-status-indicator" title="Online (Gemini Flash)"></span>
+        </div>
+        <div>
+          <div class="ai-chat-title">Nikki's AI Assistant</div>
+          <div class="ai-chat-subtitle">Powered by Gemini &middot; <span id="aiQueryCounter" class="ai-query-counter">2 queries remaining</span></div>
+        </div>
+      </div>
+      <button class="ai-chat-close-btn" onclick="toggleAiChat()" aria-label="Close Assistant">&times;</button>
+    </div>
+
+    <!-- Messages Container -->
+    <div id="aiChatMessages" class="ai-chat-messages">
+      <div class="ai-message ai-message--bot">
+        <div class="ai-bubble">
+          Hi! I'm Nikki's AI portfolio assistant. You can ask me about his work on <strong>Visage Link</strong>, <strong>SAP S/4HANA</strong>, <strong>Retail Forecasting</strong>, or his background at UMN.
+        </div>
+      </div>
+
+      <!-- Quick Suggestion Chips -->
+      <div id="aiPromptChips" class="ai-prompt-chips">
+        <button type="button" class="ai-chip" onclick="askAiChip('Summarize Nikki\'s experience with SAP S/4HANA and ABAP')">SAP &amp; ABAP</button>
+        <button type="button" class="ai-chip" onclick="askAiChip('How was Visage Link built, and what AI models does it use?')">Visage Link AI</button>
+        <button type="button" class="ai-chip" onclick="askAiChip('What were the results of the 12.6M transaction forecasting project?')">Retail Forecasting</button>
+        <button type="button" class="ai-chip" onclick="askAiChip('What is Nikki\'s education, GPA, and role availability?')">Education &amp; Roles</button>
+      </div>
+    </div>
+
+    <!-- Input Form -->
+    <form id="aiChatForm" class="ai-chat-form" onsubmit="handleAiChatSubmit(event)">
+      <input 
+        type="text" 
+        id="aiChatInput" 
+        class="ai-chat-input" 
+        placeholder="Ask a question about Nikki..." 
+        autocomplete="off" 
+        maxlength="200"
+      />
+      <button type="submit" id="aiChatSubmitBtn" class="ai-chat-send-btn" aria-label="Send Message">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </form>
+
+    <div class="ai-chat-footer-note">
+      <span>Grounded on Nikki's Resume &amp; Projects</span>
+    </div>
+  </div>
+</div>
+
 <!-- Floating Copy Toast Notification -->
 <div id="copyToast" class="copy-toast" role="status" aria-live="polite">
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>

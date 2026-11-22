@@ -860,3 +860,243 @@ function copyEmailToClipboard(e) {
     });
   }
 })();
+
+
+/* ==================================================
+   Floating AI Assistant Controller (Gemini-Powered)
+   ================================================== */
+(function() {
+  // Set your Cloudflare Worker URL here once deployed:
+  // e.g., 'https://nikki-assistant.yourname.workers.dev'
+  window.NIKKI_AI_WORKER_URL = '';
+
+  const MAX_QUERIES = 2;
+  const STORAGE_KEY = 'nikki_ai_queries_used';
+
+  function getQueriesUsed() {
+    return parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+  }
+
+  function getQueriesRemaining() {
+    return Math.max(0, MAX_QUERIES - getQueriesUsed());
+  }
+
+  function incrementQueriesUsed() {
+    const used = getQueriesUsed() + 1;
+    localStorage.setItem(STORAGE_KEY, used.toString());
+    updateCounterUI();
+    return used;
+  }
+
+  function updateCounterUI() {
+    const rem = getQueriesRemaining();
+    const counterEl = document.getElementById('aiQueryCounter');
+    const inputEl = document.getElementById('aiChatInput');
+    const submitBtn = document.getElementById('aiChatSubmitBtn');
+
+    if (counterEl) {
+      counterEl.textContent = rem === 1 ? '1 query remaining' : `${rem} queries remaining`;
+    }
+
+    if (rem <= 0) {
+      if (inputEl) {
+        inputEl.disabled = true;
+        inputEl.placeholder = 'Query limit reached (2/2)';
+      }
+      if (submitBtn) {
+        submitBtn.disabled = true;
+      }
+    }
+  }
+
+  window.toggleAiChat = function() {
+    const win = document.getElementById('aiChatWindow');
+    if (!win) return;
+    const isOpen = win.classList.toggle('is-open');
+    win.setAttribute('aria-hidden', !isOpen);
+    updateCounterUI();
+
+    if (isOpen) {
+      const inputEl = document.getElementById('aiChatInput');
+      if (inputEl && !inputEl.disabled) {
+        setTimeout(function() { inputEl.focus(); }, 150);
+      }
+    }
+  };
+
+  window.askAiChip = function(question) {
+    const inputEl = document.getElementById('aiChatInput');
+    if (!inputEl || inputEl.disabled) return;
+    inputEl.value = question;
+    const form = document.getElementById('aiChatForm');
+    if (form) {
+      handleAiChatSubmit(new Event('submit', { cancelable: true }));
+    }
+  };
+
+  // Built-in intelligent grounded knowledge responses (Zero-latency fallback)
+  function getGroundedResponse(query) {
+    const q = query.toLowerCase();
+
+    if (q.includes('sap') || q.includes('abap') || q.includes('fiori') || q.includes('odata') || q.includes('enterprise')) {
+      return "Nikki engineered an enterprise expense analytics solution on <strong>SAP S/4HANA</strong>. He developed custom ABAP Data Provider Classes (<code>DPC_EXT</code>) with dynamic OpenSQL queries to serve transactional data via OData Gateway to an <strong>SAPUI5/Fiori Analytical List Page</strong> with interactive dimension filters.";
+    }
+
+    if (q.includes('visage') || q.includes('avatar') || q.includes('voice') || q.includes('llm') || q.includes('sovits') || q.includes('qwen')) {
+      return "<strong>Visage Link</strong> is Nikki's voice AI companion system. It integrates a 3D VTuber avatar via VSeeFace (VMC/OSC protocol), local quantized <strong>Qwen 2.5 7B</strong> inference via Ollama, word-level streaming with custom <strong>GPT-SoVITS</strong> for Japanese speech synthesis, and SQLite memory—all tuned within an 8GB VRAM constraint.";
+    }
+
+    if (q.includes('forecast') || q.includes('retail') || q.includes('prophet') || q.includes('sarimax') || q.includes('transaction')) {
+      return "In his retail forecasting project, Nikki analyzed <strong>12.6 million transactions</strong>. His <strong>Facebook Prophet</strong> pipeline achieved an <strong>R² of 0.835</strong>, substantially outperforming a classical SARIMAX baseline and optimizing grocery inventory allocations.";
+    }
+
+    if (q.includes('gpa') || q.includes('education') || q.includes('umn') || q.includes('college') || q.includes('role') || q.includes('graduat') || q.includes('hire') || q.includes('work')) {
+      return "Nikki is an Information Systems undergraduate at <strong>Universitas Multimedia Nusantara (UMN)</strong>, graduating in 2027 with a <strong>3.73 / 4.00 GPA</strong>. He is actively <strong>Open to Work</strong> for 2026/2027 Software Engineering, AI/ML, and Enterprise Systems roles.";
+    }
+
+    if (q.includes('contact') || q.includes('email') || q.includes('phone') || q.includes('whatsapp') || q.includes('reach')) {
+      return "You can connect with Nikki directly on <a href='https://wa.me/6282239608228' target='_blank' style='color:var(--terracotta);text-decoration:underline;'>WhatsApp (+62 822-3960-8228)</a> or email him at <a href='mailto:nikiiwan61@gmail.com' style='color:var(--terracotta);text-decoration:underline;'>nikiiwan61@gmail.com</a>.";
+    }
+
+    return "Nikki Tirta Iwan is an Information Systems engineer (GPA 3.73) specializing in Voice AI companions (Visage Link), enterprise architecture (SAP S/4HANA & ABAP), and large-scale time-series forecasting. Feel free to ask about any of his projects or reach him directly!";
+  }
+
+  function appendMessage(text, sender) {
+    const messagesContainer = document.getElementById('aiChatMessages');
+    if (!messagesContainer) return;
+
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `ai-message ai-message--${sender}`;
+
+    const bubbleDiv = document.createElement('div');
+    bubbleDiv.className = 'ai-bubble';
+    bubbleDiv.innerHTML = text;
+
+    msgDiv.appendChild(bubbleDiv);
+    messagesContainer.appendChild(msgDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
+  function showTypingIndicator() {
+    const messagesContainer = document.getElementById('aiChatMessages');
+    if (!messagesContainer) return null;
+
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'ai-typing';
+    typingDiv.id = 'aiTypingIndicator';
+    typingDiv.innerHTML = '<span></span><span></span><span></span>';
+    messagesContainer.appendChild(typingDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    return typingDiv;
+  }
+
+  function removeTypingIndicator() {
+    const indicator = document.getElementById('aiTypingIndicator');
+    if (indicator) indicator.remove();
+  }
+
+  function showLimitReachedCard() {
+    const messagesContainer = document.getElementById('aiChatMessages');
+    if (!messagesContainer) return;
+
+    const limitDiv = document.createElement('div');
+    limitDiv.className = 'ai-limit-reached-box';
+    limitDiv.innerHTML = `
+      <strong>Device Query Limit Reached (2/2)</strong>
+      <p style="margin: 6px 0 0 0; color: var(--text-secondary);">
+        Thank you for trying Nikki's AI Assistant! To discuss roles, projects, or schedule an interview, reach Nikki directly:
+      </p>
+      <div class="ai-limit-contact-btns">
+        <a class="ai-limit-btn ai-limit-btn--wa" href="https://wa.me/6282239608228" target="_blank" rel="noopener">
+          WhatsApp &rarr;
+        </a>
+        <a class="ai-limit-btn ai-limit-btn--email" href="mailto:nikiiwan61@gmail.com">
+          Email &rarr;
+        </a>
+      </div>
+    `;
+    messagesContainer.appendChild(limitDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
+  window.handleAiChatSubmit = async function(event) {
+    if (event && event.preventDefault) event.preventDefault();
+
+    const inputEl = document.getElementById('aiChatInput');
+    if (!inputEl) return;
+    const query = inputEl.value.trim();
+    if (!query) return;
+
+    const remaining = getQueriesRemaining();
+    if (remaining <= 0) {
+      updateCounterUI();
+      return;
+    }
+
+    // 1. Append user message
+    appendMessage(query, 'user');
+    inputEl.value = '';
+
+    // 2. Hide prompt chips after first interaction
+    const chipsEl = document.getElementById('aiPromptChips');
+    if (chipsEl) chipsEl.style.display = 'none';
+
+    // 3. Decrement query usage
+    const used = incrementQueriesUsed();
+
+    // 4. Show typing animation
+    showTypingIndicator();
+
+    // 5. Query either Cloudflare Worker (Gemini) or grounded engine
+    let botReply = '';
+    const workerUrl = window.NIKKI_AI_WORKER_URL;
+
+    if (workerUrl && workerUrl.startsWith('http')) {
+      try {
+        const response = await fetch(workerUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: query })
+        });
+        if (response.ok) {
+          const data = await response.json();
+          botReply = data.reply || getGroundedResponse(query);
+        } else {
+          botReply = getGroundedResponse(query);
+        }
+      } catch (err) {
+        botReply = getGroundedResponse(query);
+      }
+    } else {
+      // Simulate natural thinking delay for grounded response
+      await new Promise(r => setTimeout(r, 650));
+      botReply = getGroundedResponse(query);
+    }
+
+    // 6. Display response
+    removeTypingIndicator();
+    appendMessage(botReply, 'bot');
+
+    // 7. If reached limit, display contact card
+    if (getQueriesRemaining() <= 0) {
+      showLimitReachedCard();
+    }
+  };
+
+  // Close on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      const win = document.getElementById('aiChatWindow');
+      if (win && win.classList.contains('is-open')) {
+        toggleAiChat();
+      }
+    }
+  });
+
+  // Initialize UI on DOM load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', updateCounterUI);
+  } else {
+    updateCounterUI();
+  }
+})();
