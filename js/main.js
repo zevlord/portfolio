@@ -866,9 +866,8 @@ function copyEmailToClipboard(e) {
    Floating AI Assistant Controller (Gemini-Powered)
    ================================================== */
 (function() {
-  // Set your Cloudflare Worker URL here once deployed:
-  // e.g., 'https://nikki-assistant.yourname.workers.dev'
-  window.NIKKI_AI_WORKER_URL = '';
+  // Configured Cloudflare Worker endpoint:
+  window.NIKKI_AI_WORKER_URL = 'https://cold-cell-15a6.syltreets.workers.dev/';
 
   const MAX_QUERIES = 2;
   const STORAGE_KEY = 'nikki_ai_queries_used';
