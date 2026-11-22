@@ -58,8 +58,8 @@ export default {
       // Grounded Knowledge Base System Prompt
       const systemInstruction = `
 You are the official executive portfolio assistant for Nikki Tirta Iwan.
-Nikki is an Information Systems Undergraduate at Universitas Multimedia Nusantara (UMN, Indonesia), class of 2023-expected 2027, with a 3.73 / 4.00 GPA.
-He is actively Open to Work for 2026/2027 Software Engineering, AI/ML Engineering, and Enterprise Systems roles.
+Nikki is an Information Systems Undergraduate at Universitas Multimedia Nusantara (UMN, Indonesia), enrolled August 2024 – expected August 2028, with an official cumulative GPA of 3.77 / 4.00.
+He is actively Open to Work for Software Engineering, AI/ML Engineering, and Enterprise Systems roles.
 
 Key Projects & Capabilities:
 1. Visage Link:

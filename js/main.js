@@ -977,14 +977,14 @@ function copyEmailToClipboard(e) {
     }
 
     if (q.includes('gpa') || q.includes('education') || q.includes('umn') || q.includes('college') || q.includes('role') || q.includes('graduat') || q.includes('hire') || q.includes('work')) {
-      return "Nikki is an Information Systems undergraduate at <strong>Universitas Multimedia Nusantara (UMN)</strong>, graduating in 2027 with a <strong>3.73 / 4.00 GPA</strong>. He is actively <strong>Open to Work</strong> for 2026/2027 Software Engineering, AI/ML, and Enterprise Systems roles.";
+      return "Nikki is an Information Systems undergraduate at <strong>Universitas Multimedia Nusantara (UMN)</strong>, enrolled August 2024 &ndash; expected August 2028, with an official cumulative GPA of <strong>3.77 / 4.00</strong>. He is actively <strong>Open to Work</strong> for Software Engineering, AI/ML, and Enterprise Systems roles.";
     }
 
     if (q.includes('contact') || q.includes('email') || q.includes('phone') || q.includes('whatsapp') || q.includes('reach')) {
       return "You can connect with Nikki directly on <a href='https://wa.me/6282239608228' target='_blank' style='color:var(--terracotta);text-decoration:underline;'>WhatsApp (+62 822-3960-8228)</a> or email him at <a href='mailto:nikiiwan61@gmail.com' style='color:var(--terracotta);text-decoration:underline;'>nikiiwan61@gmail.com</a>.";
     }
 
-    return "Nikki Tirta Iwan is an Information Systems engineer (GPA 3.73) specializing in Voice AI companions (Visage Link), enterprise architecture (SAP S/4HANA & ABAP), and large-scale time-series forecasting. Feel free to ask about any of his projects or reach him directly!";
+    return "Nikki Tirta Iwan is an Information Systems engineer (GPA 3.77 / 4.00) specializing in Voice AI companions (Visage Link), enterprise architecture (SAP S/4HANA & ABAP), and large-scale time-series forecasting. Feel free to ask about any of his projects or reach him directly!";
   }
 
   function appendMessage(text, sender) {
