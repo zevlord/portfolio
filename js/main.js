@@ -1073,17 +1073,23 @@ function copyEmailToClipboard(e) {
     // 4. Show typing animation
     showTypingIndicator();
 
-    // 5. Query either Cloudflare Worker (Gemini) or grounded engine
+    // 5. Query either Cloudflare Worker (Gemini) or grounded engine (with 3.5s strict timeout)
     let botReply = '';
     const workerUrl = window.NIKKI_AI_WORKER_URL;
 
     if (workerUrl && workerUrl.startsWith('http')) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
+
       try {
         const response = await fetch(workerUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: query })
+          body: JSON.stringify({ message: query }),
+          signal: controller.signal
         });
+        clearTimeout(timeoutId);
+
         if (response.ok) {
           const data = await response.json();
           botReply = data.reply || getGroundedResponse(query);
@@ -1091,6 +1097,8 @@ function copyEmailToClipboard(e) {
           botReply = getGroundedResponse(query);
         }
       } catch (err) {
+        clearTimeout(timeoutId);
+        // Fast fallback to grounded engine if worker is slow or timed out
         botReply = getGroundedResponse(query);
       }
     } else {

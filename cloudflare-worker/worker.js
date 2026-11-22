@@ -1,5 +1,5 @@
 /**
- * Cloudflare Worker: Secure Proxy for Google AI Studio (Gemini)
+ * Cloudflare Worker: Ultra-Fast Secure Proxy for Google AI Studio (Gemini)
  * Free 100,000 requests/day on Cloudflare Workers Free Tier.
  */
 
@@ -32,7 +32,7 @@ export default {
 
     // Health check endpoint
     if (request.method === "GET") {
-      return new Response(JSON.stringify({ status: "ok", message: "Cloudflare Worker is running version 3.0" }), {
+      return new Response(JSON.stringify({ status: "ok", message: "Cloudflare Worker running fast v3.1" }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
@@ -82,15 +82,14 @@ Key Projects & Capabilities:
    - GitHub: https://github.com/zevlord
 
 Rules:
-- Be concise, professional, warm, and articulate (2 to 4 sentences).
+- Be concise, professional, warm, and articulate (2 to 3 sentences maximum).
 - Emphasize his technical depth, genuine hands-on engineering, and strong problem-solving mindset.
 - Never invent facts or hallucinate projects outside what is listed.
 - If asked about hiring or contacting Nikki, encourage reaching him directly via WhatsApp (+62 822-3960-8228) or email (nikiiwan61@gmail.com).
 `;
 
+      // Direct primary model: gemini-3-flash-preview (fastest and verified active on key)
       const candidateModels = [
-        "gemini-2.5-flash",
-        "gemini-flash-latest",
         "gemini-3-flash-preview",
         "gemini-3.1-pro-preview"
       ];
@@ -106,11 +105,8 @@ Rules:
           }
         ],
         generationConfig: {
-          temperature: 0.3,
-          maxOutputTokens: 1500,
-          thinkingConfig: {
-            thinkingBudget: 0
-          }
+          temperature: 0.2,
+          maxOutputTokens: 600
         }
       };
 
@@ -119,48 +115,57 @@ Rules:
       for (const rawModel of candidateModels) {
         const model = rawModel.replace(/^models\//, "");
         const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-        const res = await fetch(endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
+        
+        try {
+          // 4-second timeout per attempt to guarantee fast user experience
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), 4500);
 
-        if (res.ok) {
-          const data = await res.json();
-          const candidate = data?.candidates?.[0];
-          const parts = candidate?.content?.parts || [];
-          
-          // Extract text from parts (excluding internal thinking thoughts)
-          let replyText = "";
-          for (const p of parts) {
-            if (p.text && !p.thought) {
-              replyText += p.text;
+          const res = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+            signal: controller.signal
+          });
+          clearTimeout(timer);
+
+          if (res.ok) {
+            const data = await res.json();
+            const candidate = data?.candidates?.[0];
+            const parts = candidate?.content?.parts || [];
+            
+            let replyText = "";
+            for (const p of parts) {
+              if (p.text && !p.thought) {
+                replyText += p.text;
+              }
             }
-          }
-          replyText = replyText.trim();
+            replyText = replyText.trim();
 
-          // Fallback if thought was in same part
-          if (!replyText && parts.length > 0) {
-            replyText = (parts[parts.length - 1].text || "").trim();
-          }
+            if (!replyText && parts.length > 0) {
+              replyText = (parts[parts.length - 1].text || "").trim();
+            }
 
-          if (replyText) {
-            return new Response(JSON.stringify({ 
-              reply: replyText, 
-              model_used: model,
-              version: "v3.0"
-            }), {
-              status: 200,
-              headers: { ...corsHeaders, "Content-Type": "application/json" }
-            });
+            if (replyText) {
+              return new Response(JSON.stringify({ 
+                reply: replyText, 
+                model_used: model,
+                speed: "ultra-fast"
+              }), {
+                status: 200,
+                headers: { ...corsHeaders, "Content-Type": "application/json" }
+              });
+            }
+          } else {
+            lastError = await res.text();
           }
-        } else {
-          lastError = await res.text();
+        } catch (fetchErr) {
+          lastError = fetchErr.message;
         }
       }
 
-      return new Response(JSON.stringify({ error: "Gemini generation failed", details: lastError }), {
-        status: 502,
+      return new Response(JSON.stringify({ error: "Gemini generation timed out", details: lastError }), {
+        status: 504,
         headers: { ...corsHeaders, "Content-Type": "application/json" }
       });
 
