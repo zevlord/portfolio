@@ -30,32 +30,12 @@ export default {
       });
     }
 
-    // Helper: GET request tests Gemini directly and returns diagnostic output
+    // Health check endpoint
     if (request.method === "GET") {
-      try {
-        const testPayload = {
-          contents: [{ role: "user", parts: [{ text: "Hello, tell me a 1-sentence greeting for Nikki." }] }],
-          generationConfig: {
-            maxOutputTokens: 600,
-            thinkingConfig: { thinkingBudget: 0 }
-          }
-        };
-        const testRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(testPayload)
-        });
-        const testData = await testRes.json();
-        return new Response(JSON.stringify(testData, null, 2), {
-          status: testRes.status,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        });
-      } catch (err) {
-        return new Response(JSON.stringify({ error: err.message }), {
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        });
-      }
+      return new Response(JSON.stringify({ status: "ok", message: "Cloudflare Worker is running version 3.0" }), {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      });
     }
 
     if (request.method !== "POST") {
@@ -109,10 +89,10 @@ Rules:
 `;
 
       const candidateModels = [
+        "gemini-2.5-flash",
+        "gemini-flash-latest",
         "gemini-3-flash-preview",
-        "gemini-3.1-pro-preview",
-        "gemini-3.1-flash-lite",
-        "gemini-3.5-flash"
+        "gemini-3.1-pro-preview"
       ];
 
       const payload = {
@@ -127,7 +107,7 @@ Rules:
         ],
         generationConfig: {
           temperature: 0.3,
-          maxOutputTokens: 800,
+          maxOutputTokens: 1500,
           thinkingConfig: {
             thinkingBudget: 0
           }
@@ -150,7 +130,7 @@ Rules:
           const candidate = data?.candidates?.[0];
           const parts = candidate?.content?.parts || [];
           
-          // Extract text from parts (filtering out any thinking blocks)
+          // Extract text from parts (excluding internal thinking thoughts)
           let replyText = "";
           for (const p of parts) {
             if (p.text && !p.thought) {
@@ -159,11 +139,16 @@ Rules:
           }
           replyText = replyText.trim();
 
+          // Fallback if thought was in same part
+          if (!replyText && parts.length > 0) {
+            replyText = (parts[parts.length - 1].text || "").trim();
+          }
+
           if (replyText) {
             return new Response(JSON.stringify({ 
               reply: replyText, 
               model_used: model,
-              finish_reason: candidate?.finishReason
+              version: "v3.0"
             }), {
               status: 200,
               headers: { ...corsHeaders, "Content-Type": "application/json" }
