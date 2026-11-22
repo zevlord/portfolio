@@ -97,13 +97,16 @@ Rules:
 - If asked about hiring or contacting Nikki, encourage reaching him directly via WhatsApp (+62 822-3960-8228) or email (nikiiwan61@gmail.com).
 `;
 
-      // Supported models active on your Google AI Studio account:
+      // Models to try in order of Google AI Studio availability:
       const candidateModels = [
+        body.model,
+        "gemini-3.1-pro-preview",
+        "gemini-3-flash-preview",
+        "gemini-3.1-flash-lite",
+        "gemini-3.5-flash",
         "gemini-2.5-flash",
-        "gemini-flash-latest",
-        "gemini-2.5-flash-lite",
-        "gemini-2.5-pro"
-      ];
+        "gemini-flash-latest"
+      ].filter(Boolean);
 
       const payload = {
         system_instruction: {
@@ -123,7 +126,8 @@ Rules:
 
       let lastError = null;
 
-      for (const model of candidateModels) {
+      for (const rawModel of candidateModels) {
+        const model = rawModel.replace(/^models\//, "");
         const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
         const res = await fetch(endpoint, {
           method: "POST",
