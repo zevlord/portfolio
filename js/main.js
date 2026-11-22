@@ -869,7 +869,7 @@ function copyEmailToClipboard(e) {
   // Configured Cloudflare Worker endpoint:
   window.NIKKI_AI_WORKER_URL = 'https://cold-cell-15a6.syltreets.workers.dev/';
 
-  const MAX_QUERIES = 2;
+  const MAX_QUERIES = 8;
   const STORAGE_KEY = 'nikki_ai_queries_used';
 
   function getQueriesUsed() {
@@ -900,7 +900,7 @@ function copyEmailToClipboard(e) {
     if (rem <= 0) {
       if (inputEl) {
         inputEl.disabled = true;
-        inputEl.placeholder = 'Query limit reached (2/2)';
+        inputEl.placeholder = `Query limit reached (${MAX_QUERIES}/${MAX_QUERIES})`;
       }
       if (submitBtn) {
         submitBtn.disabled = true;
@@ -1028,7 +1028,7 @@ function copyEmailToClipboard(e) {
     const limitDiv = document.createElement('div');
     limitDiv.className = 'ai-limit-reached-box';
     limitDiv.innerHTML = `
-      <strong>Device Query Limit Reached (2/2)</strong>
+      <strong>Device Query Limit Reached (${MAX_QUERIES}/${MAX_QUERIES})</strong>
       <p style="margin: 6px 0 0 0; color: var(--text-secondary);">
         Thank you for testing the AI Assistant! To discuss roles, projects, or schedule an interview, reach Nikki directly:
       </p>
