@@ -1476,8 +1476,8 @@ body {
 
 .hero-jump-pill {
   position: absolute;
-  bottom: 28px;
-  right: 48px;
+  bottom: 82px;
+  right: 24px;
   z-index: 10;
   display: inline-flex;
   align-items: center;
