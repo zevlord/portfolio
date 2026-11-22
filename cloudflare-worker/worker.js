@@ -30,13 +30,24 @@ export default {
       });
     }
 
-    // Helper: GET request lists available models for this API key
+    // Helper: GET request tests Gemini directly and returns diagnostic output
     if (request.method === "GET") {
       try {
-        const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
-        const listData = await listRes.json();
-        return new Response(JSON.stringify(listData, null, 2), {
-          status: listRes.status,
+        const testPayload = {
+          contents: [{ role: "user", parts: [{ text: "Hello, tell me a 1-sentence greeting for Nikki." }] }],
+          generationConfig: {
+            maxOutputTokens: 600,
+            thinkingConfig: { thinkingBudget: 0 }
+          }
+        };
+        const testRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(testPayload)
+        });
+        const testData = await testRes.json();
+        return new Response(JSON.stringify(testData, null, 2), {
+          status: testRes.status,
           headers: { ...corsHeaders, "Content-Type": "application/json" }
         });
       } catch (err) {
@@ -91,22 +102,18 @@ Key Projects & Capabilities:
    - GitHub: https://github.com/zevlord
 
 Rules:
-- Be concise, professional, warm, and articulate (2 to 4 sentences maximum).
+- Be concise, professional, warm, and articulate (2 to 4 sentences).
 - Emphasize his technical depth, genuine hands-on engineering, and strong problem-solving mindset.
 - Never invent facts or hallucinate projects outside what is listed.
 - If asked about hiring or contacting Nikki, encourage reaching him directly via WhatsApp (+62 822-3960-8228) or email (nikiiwan61@gmail.com).
 `;
 
-      // Models to try in order of Google AI Studio availability:
       const candidateModels = [
-        body.model,
-        "gemini-3.1-pro-preview",
         "gemini-3-flash-preview",
+        "gemini-3.1-pro-preview",
         "gemini-3.1-flash-lite",
-        "gemini-3.5-flash",
-        "gemini-2.5-flash",
-        "gemini-flash-latest"
-      ].filter(Boolean);
+        "gemini-3.5-flash"
+      ];
 
       const payload = {
         system_instruction: {
@@ -120,7 +127,10 @@ Rules:
         ],
         generationConfig: {
           temperature: 0.3,
-          maxOutputTokens: 250,
+          maxOutputTokens: 800,
+          thinkingConfig: {
+            thinkingBudget: 0
+          }
         }
       };
 
@@ -137,9 +147,24 @@ Rules:
 
         if (res.ok) {
           const data = await res.json();
-          const replyText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+          const candidate = data?.candidates?.[0];
+          const parts = candidate?.content?.parts || [];
+          
+          // Extract text from parts (filtering out any thinking blocks)
+          let replyText = "";
+          for (const p of parts) {
+            if (p.text && !p.thought) {
+              replyText += p.text;
+            }
+          }
+          replyText = replyText.trim();
+
           if (replyText) {
-            return new Response(JSON.stringify({ reply: replyText, model_used: model }), {
+            return new Response(JSON.stringify({ 
+              reply: replyText, 
+              model_used: model,
+              finish_reason: candidate?.finishReason
+            }), {
               status: 200,
               headers: { ...corsHeaders, "Content-Type": "application/json" }
             });
