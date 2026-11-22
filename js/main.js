@@ -1004,7 +1004,7 @@ function copyEmailToClipboard(e) {
     limitDiv.innerHTML = `
       <strong>Device Query Limit Reached (2/2)</strong>
       <p style="margin: 6px 0 0 0; color: var(--text-secondary);">
-        Thank you for trying Nikki's AI Assistant! To discuss roles, projects, or schedule an interview, reach Nikki directly:
+        Thank you for testing the AI Assistant! To discuss roles, projects, or schedule an interview, reach Nikki directly:
       </p>
       <div class="ai-limit-contact-btns">
         <a class="ai-limit-btn ai-limit-btn--wa" href="https://wa.me/6282239608228" target="_blank" rel="noopener">
