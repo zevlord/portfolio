@@ -38,7 +38,6 @@ html {
   background: var(--bg);
   color: var(--text-primary);
   font-family: var(--font-sans);
-  scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;

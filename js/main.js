@@ -1,3 +1,44 @@
+/* ==================================================
+   Lenis Smooth Scrolling Architecture
+   ================================================== */
+(function initLenis() {
+  if (typeof Lenis === 'undefined') return;
+
+  const lenis = new Lenis({
+    duration: 1.15,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    orientation: 'vertical',
+    gestureOrientation: 'vertical',
+    smoothWheel: true,
+    wheelMultiplier: 1.0,
+    touchMultiplier: 1.6,
+    infinite: false,
+  });
+
+  window.lenis = lenis;
+
+  function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+  }
+  requestAnimationFrame(raf);
+
+  // Smooth scroll all in-page anchor links with Lenis
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+      anchor.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (!href || href === '#') return;
+        const target = document.querySelector(href);
+        if (target) {
+          e.preventDefault();
+          lenis.scrollTo(target, { offset: -30, duration: 1.2 });
+        }
+      });
+    });
+  });
+})();
+
 (function() {
   const runway = document.querySelector('.hero-runway');
   const adam = document.getElementById('adamLayer');
@@ -173,7 +214,11 @@ function scrollToMilestone(id) {
   });
 
   const isMobile = window.innerWidth <= 768;
-  target.scrollIntoView({ behavior: 'smooth', block: isMobile ? 'start' : 'center' });
+  if (window.lenis) {
+    window.lenis.scrollTo(target, { offset: isMobile ? 0 : -80, duration: 1.2 });
+  } else {
+    target.scrollIntoView({ behavior: 'smooth', block: isMobile ? 'start' : 'center' });
+  }
 }
 
 // Scroll-Spy for Timeline Nodes
@@ -608,6 +653,7 @@ function copyEmailToClipboard(e) {
 
   // Temporarily lock scroll during entrance
   document.body.style.overflow = 'hidden';
+  if (window.lenis) window.lenis.stop();
 
   // Initial progress nudge
   requestAnimationFrame(function() {
@@ -684,6 +730,7 @@ function copyEmailToClipboard(e) {
             if (glider.parentElement) glider.remove();
             if (curtain.parentElement) curtain.remove();
             document.body.style.overflow = '';
+            if (window.lenis) window.lenis.start();
           }, 800);
         });
       }, 350);

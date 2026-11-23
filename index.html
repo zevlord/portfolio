@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
+<link rel="stylesheet" href="css/lenis.css">
 <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -933,8 +934,9 @@ cursor.execute(<span style="color:#a8c97f;">"""
 </div>
 
 <!-- --------------------------------------------------
-     Hardware-Accelerated 60-120 FPS Scroll Controller
+     Lenis Smooth Scrolling + Hardware Scroll Controller
      -------------------------------------------------- -->
+<script src="js/lenis.min.js"></script>
 <script src="js/main.js" defer></script>
 
 
@@ -968,7 +970,7 @@ cursor.execute(<span style="color:#a8c97f;">"""
     </div>
 
     <!-- Messages Container -->
-    <div id="aiChatMessages" class="ai-chat-messages">
+    <div id="aiChatMessages" class="ai-chat-messages" data-lenis-prevent>
       <div class="ai-message ai-message--bot">
         <div class="ai-bubble">
           Hi! I'm Nikki's AI portfolio assistant. You can ask me about his work on <strong>Visage Link</strong>, <strong>SAP S/4HANA</strong>, <strong>Retail Forecasting</strong>, or his background at UMN.
