@@ -438,7 +438,7 @@ function switchSapTab(tab) {
 // --------------------------------------------------
 function copyEmailToClipboard(e) {
   if (e) e.preventDefault();
-  const email = "nikiiwan61@gmail.com";
+  const email = "nikkiiwan61@gmail.com";
   const showToast = () => {
     const toast = document.getElementById('copyToast');
     if (!toast) return;
@@ -981,7 +981,7 @@ function copyEmailToClipboard(e) {
     }
 
     if (q.includes('contact') || q.includes('email') || q.includes('phone') || q.includes('whatsapp') || q.includes('reach')) {
-      return "You can connect with Nikki directly on <a href='https://wa.me/6282239608228' target='_blank' style='color:var(--terracotta);text-decoration:underline;'>WhatsApp (+62 822-3960-8228)</a> or email him at <a href='mailto:nikiiwan61@gmail.com' style='color:var(--terracotta);text-decoration:underline;'>nikiiwan61@gmail.com</a>.";
+      return "You can connect with Nikki directly on <a href='https://wa.me/6282239608228' target='_blank' style='color:var(--terracotta);text-decoration:underline;'>WhatsApp (+62 822-3960-8228)</a> or email him at <a href='mailto:nikkiiwan61@gmail.com' style='color:var(--terracotta);text-decoration:underline;'>nikkiiwan61@gmail.com</a>.";
     }
 
     return "Nikki Tirta Iwan is an Information Systems engineer (GPA 3.77 / 4.00) specializing in Voice AI companions (Visage Link), enterprise architecture (SAP S/4HANA & ABAP), and large-scale time-series forecasting. Feel free to ask about any of his projects or reach him directly!";
@@ -1036,7 +1036,7 @@ function copyEmailToClipboard(e) {
         <a class="ai-limit-btn ai-limit-btn--wa" href="https://wa.me/6282239608228" target="_blank" rel="noopener">
           WhatsApp &rarr;
         </a>
-        <a class="ai-limit-btn ai-limit-btn--email" href="mailto:nikiiwan61@gmail.com">
+        <a class="ai-limit-btn ai-limit-btn--email" href="mailto:nikkiiwan61@gmail.com">
           Email &rarr;
         </a>
       </div>

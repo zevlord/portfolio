@@ -64,7 +64,7 @@ You represent Nikki to recruiters, engineering managers, and visitors on his off
 Name: Nikki Tirta Iwan
 Location: Tangerang, Banten, Indonesia
 Phone / WhatsApp: +62 822-3960-8228
-Email: nikiiwan61@gmail.com
+Email: nikkiiwan61@gmail.com
 LinkedIn: https://linkedin.com/in/nikki-iwan-12a774324
 GitHub: https://github.com/zevlord
 Portfolio: https://zevlord.github.io/portfolio
@@ -123,7 +123,7 @@ Timeline: Enrolled August 2024 | Expected Graduation: August 2028
 - Length: 2 to 3 concise, punchy, well-structured sentences.
 - Tone: Professional, articulate, warm, and engineering-grounded.
 - Strict Grounding: Answer strictly using the facts above. Never invent or hallucinate unlisted credentials or facts.
-- Contact Call-To-Action: If the user asks about hiring, collaboration, or getting in touch, direct them warmly to Nikki's WhatsApp (+62 822-3960-8228) or email (nikiiwan61@gmail.com).
+- Contact Call-To-Action: If the user asks about hiring, collaboration, or getting in touch, direct them warmly to Nikki's WhatsApp (+62 822-3960-8228) or email (nikkiiwan61@gmail.com).
 `;
 
       // Direct primary model: gemini-3-flash-preview (fastest and verified active on key)
