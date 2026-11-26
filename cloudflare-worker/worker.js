@@ -11,8 +11,12 @@ export default {
       "http://127.0.0.1:5500"
     ];
     const origin = request.headers.get("Origin") || "";
+    const isLocalOrigin = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin);
+    const allowOrigin = allowedOrigins.includes(origin) || isLocalOrigin
+      ? origin
+      : "https://zevlord.github.io";
     const corsHeaders = {
-      "Access-Control-Allow-Origin": allowedOrigins.includes(origin) ? origin : "https://zevlord.github.io",
+      "Access-Control-Allow-Origin": allowOrigin,
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
       "Access-Control-Max-Age": "86400",
@@ -144,7 +148,7 @@ Timeline: Enrolled August 2024 | Expected Graduation: August 2028
         ],
         generationConfig: {
           temperature: 0.2,
-          maxOutputTokens: 600
+          maxOutputTokens: 2048
         }
       };
 
@@ -155,9 +159,9 @@ Timeline: Enrolled August 2024 | Expected Graduation: August 2028
         const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
         
         try {
-          // 4-second timeout per attempt to guarantee fast user experience
+          // 7-second timeout per attempt so Gemini 3 responses finish without truncating
           const controller = new AbortController();
-          const timer = setTimeout(() => controller.abort(), 4500);
+          const timer = setTimeout(() => controller.abort(), 7000);
 
           const res = await fetch(endpoint, {
             method: "POST",

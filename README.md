@@ -1,51 +1,56 @@
-# Nikki Tirta Iwan — Portfolio Assets & Blueprint Hub
+# Nikki Tirta Iwan — Portfolio Website
 
-This directory contains the core visual, data, and architectural assets for **Nikki Tirta Iwan's** professional portfolio website.
+Personal engineering portfolio for **Nikki Tirta Iwan** (Information Systems undergraduate at Universitas Multimedia Nusantara), showcasing work across **Local-First Voice AI**, **Large-Scale Time-Series Forecasting**, and **SAP S/4HANA Enterprise Systems**.
+
+- **Live Site:** [zevlord.github.io/portfolio](https://zevlord.github.io/portfolio/)
+- **AI Assistant Proxy:** Cloudflare Worker (`cloudflare-worker/worker.js` v3.1)
 
 ---
 
-## Directory Structure
+## Project Structure
 
 ```
 D:\Portofolio website\
+├── index.html                   # Morphing chrome, hero fluid runway, pinned 3-act work stage & case modal
+├── css/
+│   ├── style.css                # Florentine High Renaissance Dark Cream design system & stage responsive rules
+│   └── lenis.css                # Self-hosted Lenis smooth scrolling styles
+├── js/
+│   ├── fluid-engine.js          # WebGL2 Navier-Stokes fluid ink solver (Hero & Footer)
+│   ├── main.js                  # Morphing header, menu overlay, pinned work stage, Chronologia & AI widget
+│   └── lenis.min.js             # Self-hosted Lenis smooth scroll library
+├── cloudflare-worker/
+│   └── worker.js                # Serverless Gemini API proxy (env.GEMINI_API_KEY, CORS-restricted)
 ├── assets/
-│   ├── branding/
-│   │   ├── logo-monogram.svg        # Scalable NTI monogram with electric cyan & emerald accent
-│   │   ├── favicon.svg              # 64x64 crisp technical favicon for browser tabs
-│   │   └── og-preview.svg           # 1200x630 OpenGraph social share card with metrics & telemetry
-│   ├── diagrams/
-│   │   ├── visage-link-architecture.svg        # Real-time audio streaming, LLM inference & 8GB VRAM constraint
-│   │   ├── retail-forecasting-pipeline.svg     # CRISP-DM 12.8M-row time-series benchmark (Prophet vs. SARIMAX)
-│   │   ├── sap-fiori-s4hana-architecture.svg   # S/4HANA DB -> ABAP DPC_EXT -> OData Gateway -> Fiori ALP
-│   │   ├── borrowin-layered-architecture.svg   # C# (.NET) layered architecture & RBAC
-│   │   ├── bca-autologger-serverless.svg       # Event-driven bank email parsing via GAS & Telegram webhooks
-│   │   └── argos-proxmox-netbird-infra.svg     # Proxmox VE hypervisor & NetBird WireGuard mesh network
-│   ├── mockups/
-│   │   ├── visage-link-ui-mockup.svg           # 3D avatar viewport, audio stream waveform & memory guard
-│   │   ├── forecasting-chart-mockup.svg        # Time-series benchmark curves with confidence bands
-│   │   └── fiori-alp-mockup.svg                # SAP Fiori Analytical List Page with live dimension filter bar
-│   └── data/
-│       ├── portfolio-data.json                 # Complete structured JSON dataset extracted from CV
-│       └── portfolio-data.ts                   # Fully typed TypeScript data interface for Next.js / React
+│   ├── layers/                  # Isolated hero fresco background and Adam/Cyborg WebP layers
+│   ├── certs/                   # Verified IBM SkillsBuild & Adobe Learning Manager certificates
+│   ├── Footer.webp              # Full-bleed Renaissance footer backdrop
+│   ├── visage-link-demo.mp4     # 3D VRM avatar + GPT-SoVITS Japanese voice demonstration
+│   ├── argos-n8n.mp4            # Campus workshop documentation video
+│   ├── sap-*.png                # IS539 SAP Fiori ALP & ABAP DPC_EXT exam evidence
+│   └── Nikki_Tirta_Iwan_Resume.pdf
 └── README.md
 ```
 
 ---
 
-## Asset Mapping to Nikki's CV
+## Featured Projects & Interactive Architecture
 
-| Project / Section | Associated Assets | Strategic Engineering Narrative |
-| :--- | :--- | :--- |
-| **Visage Link** | `visage-link-architecture.svg`<br/>`visage-link-ui-mockup.svg` | Demonstrates word-level streaming audio synthesis, VMC/OSC protocol avatar rigging, and 8GB VRAM budget optimization. |
-| **Retail Forecasting at Scale** | `retail-forecasting-pipeline.svg`<br/>`forecasting-chart-mockup.svg` | Highlights 12.8M rows (1.6 GB) data science under the CRISP-DM framework, benchmarking Prophet against SARIMAX and Holt-Winters. |
-| **Office Supply Analytics (SAP)** | `sap-fiori-s4hana-architecture.svg`<br/>`fiori-alp-mockup.svg` | Highlights enterprise-grade SAP S/4HANA backend with custom ABAP `DPC_EXT` classes, dynamic OpenSQL, and SAPUI5 Fiori ALP. |
-| **BorrowIn (.NET)** | `borrowin-layered-architecture.svg` | Demonstrates classic software engineering discipline: layered architecture, RBAC, and automated RDLC reporting. |
-| **BCA Autologger** | `bca-autologger-serverless.svg` | Demonstrates serverless agility, regex data extraction, Google Sheets automation, and real-time Telegram Bot webhooks. |
-| **Argos Club & Leadership** | `argos-proxmox-netbird-infra.svg` | Showcases hands-on server virtualization (Proxmox VE), overlay mesh networking (NetBird), and campus mentoring. |
+1. **Hero (`#top`)** — `380vh` scroll-driven fingertip convergence over isolated Sistine WebP layers paired with a **WebGL2 Navier-Stokes ink simulation** (`#heroFluidCanvas`), synapse energy arcs (`#heroSynapseCanvas`), and morphing header (`#headerBar` → floating `NTI` + `MENU` pills).
+2. **Pinned Exhibition Stage (`#work`, `01 / 03` → `03 / 03`)** — Full-viewport `360vh` sticky stage (stacked on `<=900px`) with 3-segment clickable progress rail and deep-dive **`#caseStudyModal`**:
+   - **01 · Visage Link** — Local `Qwen 2.5 7B`, `GPT-SoVITS` Japanese speech streaming, `SQLite` BLOB RAG, `VMC/OSC` UDP `39539` within 8GB VRAM (`#caseStudyModal` 4-tab code inspector). ([Repo](https://github.com/zevlord/Visage-Link))
+   - **02 · 12.6M Retail Demand Forecasting** — CRISP-DM study (`salesFinal2016.csv`, 1.6 GB, `chunksize=100k`) benchmarking Prophet (`R² = 0.8349`) vs SARIMAX (`0.4846`) vs ADF baseline (`0.2521`). ([Repo](https://github.com/zevlord/inventory-forecasting))
+   - **03 · SAP S/4HANA Analytics** — Custom ABAP `DPC_EXT` OData Gateway (`Z_EXP_FIORI_SRV`) and SAPUI5 Analytical List Page (`zumn.is539.group2.officesupplyreport`) with 5-tab modal inspector. ([Repo](https://github.com/zevlord/sap-fiori-office-supply-report))
+3. **Chronologia Timeline (`#background`)** — Scroll-drawn terracotta spine (`timelineSpine`) with filterable, reversible experience and credential cards (Argos Club, IBM SkillsBuild, BorrowIn, Perkenalan Prodi SI, BCA Autologger, UMN).
+4. **Interactive Footer (`#contact`) & Ask AI (`#aiChatWidget`)** — *School of Athens* WebP backdrop layered with luminous parchment/terracotta fluid ink (`#footerFluidCanvas`), Back-to-Top pill, and Gemini-powered Ask AI widget proxied via Cloudflare Workers (`8` queries/device, 12s client timeout + local grounded fallback).
 
 ---
 
-## Next Steps for Frontend Development
-- Initialize Next.js 15 (or Vite + React) in this directory or a dedicated workspace.
-- Import `assets/data/portfolio-data.ts` to power all dynamic components.
-- Use the SVGs in `assets/diagrams/` and `assets/mockups/` inside interactive modal case studies and bento grid cards.
+## Local Preview & Deployment
+
+```powershell
+# Run local static server on port 5500 (whitelisted by Cloudflare Worker CORS)
+python -m http.server 5500
+```
+
+Push updates to `main` to deploy static frontend files to GitHub Pages. Changes inside `cloudflare-worker/worker.js` must be deployed separately in the Cloudflare Workers dashboard (`cold-cell-15a6`).

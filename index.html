@@ -15,7 +15,12 @@
 </head>
 
 <body>
-  <!-- Estheet Kinetic Entrance & Preloader (Trial) -->
+  <!-- Global Top Reading Progress Thread -->
+  <div class="global-progress-track" aria-hidden="true">
+    <div class="header-progress" id="headerProgress"></div>
+  </div>
+
+  <!-- Estheet Kinetic Entrance & Preloader -->
   <div id="estheetCurtain" class="estheet-curtain">
     <div class="estheet-center-stage">
       <div class="estheet-kicker">Portfolio</div>
@@ -27,49 +32,119 @@
     </div>
   </div>
 
+  <!-- Dynamic Ambient Background Atmosphere -->
+  <canvas id="dynamicAtmosphereCanvas" aria-hidden="true"></canvas>
 
-<!-- Dynamic Ambient Background Atmosphere (Interactive, Non-Obstructive) -->
-<canvas id="dynamicAtmosphereCanvas" aria-hidden="true"></canvas>
+  <!-- Top Navigation Header (Morphs into floating MENU pill on scroll) -->
+  <header class="header-bar" id="headerBar">
+    <a class="brand-name" href="#top">
+      <img src="assets/profile-picture.jpg" alt="Nikki Tirta Iwan" class="nav-avatar">
+      <span>Nikki Tirta Iwan</span>
+    </a>
 
-<!-- Header (Clean, Understated Navigation) -->
-<header class="header-bar">
-  <a class="brand-name" href="#top">
-    <img src="assets/profile-picture.jpg" alt="Nikki Tirta Iwan" class="nav-avatar">
-    <span>Nikki Tirta Iwan</span>
-  </a>
+    <nav aria-label="Primary Navigation">
+      <ul class="nav-links">
+        <li><a class="nav-link" href="#intro" data-section="intro">About</a></li>
+        <li><a class="nav-link" href="#work" data-section="work">Work</a></li>
+        <li><a class="nav-link" href="#background" data-section="background">Experience</a></li>
+        <li><a class="nav-link" href="#contact" data-section="contact">Contact</a></li>
+      </ul>
+    </nav>
 
-  <nav>
-    <ul class="nav-links">
-      <li><a class="nav-link" href="#visage-link">Visage Link</a></li>
-      <li><a class="nav-link" href="#forecasting">Forecasting</a></li>
-      <li><a class="nav-link" href="#enterprise">SAP S/4HANA</a></li>
-      <li><a class="nav-link" href="#background">Experience</a></li>
-      <li><a class="nav-link" href="#contact">Contact</a></li>
-    </ul>
-  </nav>
-</header>
+    <button type="button" class="mobile-nav-toggle" id="mobileNavToggle" onclick="toggleMenuOverlay()" aria-expanded="false" aria-controls="menuOverlay" aria-label="Open navigation menu">
+      <span>Menu</span>
+      <span class="menu-lines" aria-hidden="true"><i></i><i></i></span>
+    </button>
+  </header>
+
+  <!-- Scrolled Floating Minimal Chrome (Appears past hero) -->
+  <div class="floating-chrome" id="floatingChrome">
+    <a class="floating-brand-pill" href="#top" aria-label="Back to top">
+      <img src="assets/profile-picture.jpg" alt="Nikki Tirta Iwan" class="nav-avatar">
+      <span>NTI</span>
+    </a>
+
+    <button type="button" class="floating-menu-pill" id="floatingMenuBtn" onclick="toggleMenuOverlay()" aria-expanded="false" aria-controls="menuOverlay">
+      <span>Menu</span>
+      <span class="menu-lines" aria-hidden="true"><i></i><i></i></span>
+    </button>
+  </div>
+
+  <!-- Editorial Navigation Overlay -->
+  <div class="menu-overlay" id="menuOverlay" aria-hidden="true" role="dialog" aria-label="Navigation Menu">
+    <div class="menu-overlay__backdrop" onclick="toggleMenuOverlay(true)"></div>
+    <div class="menu-overlay__panel">
+      <div class="menu-overlay__head">
+        <span class="menu-overlay__eyebrow">Navigation Index</span>
+        <button type="button" class="menu-overlay__close" onclick="toggleMenuOverlay(true)" aria-label="Close menu">&times; Close</button>
+      </div>
+
+      <nav class="menu-overlay__links" aria-label="Full Site Navigation">
+        <a href="#top" class="menu-item" onclick="navigateToAnchor('#top')">
+          <span class="menu-num">00</span>
+          <span class="menu-title">Hero Convergence</span>
+          <span class="menu-arrow">&rarr;</span>
+        </a>
+        <a href="#intro" class="menu-item" onclick="navigateToAnchor('#intro')">
+          <span class="menu-num">01</span>
+          <span class="menu-title">Introduction &amp; Resume</span>
+          <span class="menu-arrow">&rarr;</span>
+        </a>
+        <a href="#work" class="menu-item" onclick="jumpToWorkSlide(0)">
+          <span class="menu-num">02</span>
+          <span class="menu-title">Visage Link &mdash; Voice AI</span>
+          <span class="menu-arrow">&rarr;</span>
+        </a>
+        <a href="#work" class="menu-item" onclick="jumpToWorkSlide(1)">
+          <span class="menu-num">03</span>
+          <span class="menu-title">12.6M Retail Demand Forecasting</span>
+          <span class="menu-arrow">&rarr;</span>
+        </a>
+        <a href="#work" class="menu-item" onclick="jumpToWorkSlide(2)">
+          <span class="menu-num">04</span>
+          <span class="menu-title">SAP S/4HANA Analytics</span>
+          <span class="menu-arrow">&rarr;</span>
+        </a>
+        <a href="#background" class="menu-item" onclick="navigateToAnchor('#background')">
+          <span class="menu-num">05</span>
+          <span class="menu-title">Chronologia &mdash; Experience</span>
+          <span class="menu-arrow">&rarr;</span>
+        </a>
+        <a href="#contact" class="menu-item" onclick="navigateToAnchor('#contact')">
+          <span class="menu-num">06</span>
+          <span class="menu-title">Contact &amp; Links</span>
+          <span class="menu-arrow">&rarr;</span>
+        </a>
+      </nav>
+
+      <div class="menu-overlay__foot">
+        <a href="assets/Nikki_Tirta_Iwan_Resume.pdf" target="_blank" rel="noopener" class="menu-cv-link">Resume PDF &nearr;</a>
+      </div>
+    </div>
+  </div>
 
 <main>
-  <!-- Hero Section: Hardware-Accelerated 60-120 FPS Layer Runway -->
+  <!-- Hero Section: Hardware-Accelerated Layer Convergence + Live WebGL Fluid Ink -->
   <section class="hero-runway" id="top">
     <div class="hero-sticky">
-      <div class="hero-stage">
-        <!-- Layer 1: Static Background Plate (Fresco Texture) -->
+      <div class="hero-stage" id="heroStage">
+        <!-- Layer 1: Static Background Plate -->
         <img
+          id="heroBgPlate"
           class="hero-bg-plate"
           src="assets/layers/clean_fresco_bg.jpg"
           alt="Classical Fresco Canvas"
           loading="eager"
         >
 
-        <!-- Layer 1.5: Ambient Fresco Motes / Particles Canvas -->
+        <!-- Layer 1.5: Ambient Fresco Particles Canvas -->
         <canvas id="heroAtmosphere" class="hero-atmosphere" aria-hidden="true"></canvas>
 
-        <!-- Layer 2: Adam Figure Layer (With Complete Foot Intact) -->
+        <!-- Layer 2: Adam Figure Layer -->
         <img
           id="adamLayer"
           class="hero-figure hero-figure--adam"
-          src="assets/layers/adam_layer.png"
+          src="assets/layers/adam_layer.webp"
           alt="Human Mind — Creation of Adam"
           loading="eager"
         >
@@ -78,18 +153,24 @@
         <img
           id="cyborgLayer"
           class="hero-figure hero-figure--cyborg"
-          src="assets/layers/cyborg_layer.png"
+          src="assets/layers/cyborg_layer.webp"
           alt="Artificial Intelligence — Cybernetic Deity"
           loading="eager"
         >
 
-        <!-- Layer 4: Warm Claude Vignette -->
-        <div class="hero-vignette" aria-hidden="true"></div>
+        <!-- Layer 4: Real-Time WebGL2 Interactive Walnut Ink & Terracotta Fluid Simulation -->
+        <canvas id="heroFluidCanvas" class="hero-fluid-canvas" aria-hidden="true"></canvas>
 
-        <!-- Layer 5: Touchpoint Electric Spark (Fingertips) -->
+        <!-- Layer 4.5: Warm Archival Vignette + Museum Track-Light + Synapse Arcs -->
+        <div class="hero-vignette" aria-hidden="true"></div>
+        <div id="heroSpotlight" class="hero-spotlight" aria-hidden="true"></div>
+        <canvas id="heroSynapseCanvas" class="hero-synapse-canvas" aria-hidden="true"></canvas>
+
+        <!-- Layer 5: Touchpoint Electric Spark & Resonance Ring (Fingertips) -->
+        <div id="heroSparkRing" class="hero-spark-ring" aria-hidden="true"></div>
         <div id="heroSpark" class="hero-spark" aria-hidden="true"></div>
 
-        <!-- Layer 6: Unboxed Connecting With Technology Title -->
+        <!-- Layer 6: Unboxed Connecting With Technology Title (Difference/Ink Interaction) -->
         <div id="heroPlaque" class="hero-plaque">
           <h1 class="plaque-title">
             Connecting With Technology
@@ -97,7 +178,7 @@
         </div>
 
         <!-- Hero Quick Jump Pill -->
-        <a href="#intro" class="hero-jump-pill" id="heroJumpPill" aria-label="Skip to projects">
+        <a href="#intro" class="hero-jump-pill" id="heroJumpPill" aria-label="Skip to introduction">
           <span>Explore Work</span>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
         </a>
@@ -130,7 +211,7 @@
               <span>View Curriculum Vitae (PDF)</span>
               <span>&rarr;</span>
             </a>
-            <button class="intro-cv-preview-btn" onclick="openPdfModal('assets/Nikki_Tirta_Iwan_Resume.pdf', 'Nikki Tirta Iwan — Curriculum Vitae', 'Information Systems Undergraduate &middot; AI &amp; Enterprise Architecture')">
+            <button type="button" class="intro-cv-preview-btn" onclick="openPdfModal('assets/Nikki_Tirta_Iwan_Resume.pdf', 'Nikki Tirta Iwan — Curriculum Vitae', 'Information Systems Undergraduate &middot; AI &amp; Enterprise Architecture')">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               <span>Quick Preview</span>
             </button>
@@ -139,9 +220,9 @@
 
         <div class="intro-portrait-wrap">
           <div class="portrait-frame">
-            <img 
-              src="assets/profile-picture.jpg" 
-              alt="Nikki Tirta Iwan — Professional Portrait" 
+            <img
+              src="assets/profile-picture.jpg"
+              alt="Nikki Tirta Iwan — Professional Portrait"
               class="portrait-img"
               loading="eager"
             >
@@ -154,443 +235,168 @@
     </div>
   </section>
 
-  <!-- Project 01: Visage Link (Visual-Heavy, Minimal Wording) -->
-  <section class="section" id="visage-link">
-    <div class="container">
-      <div class="section-label">01 &mdash; Voice AI &amp; Avatars</div>
-
-      <h2 class="section-heading">Visage Link</h2>
-      <p class="section-desc">
-        A Local-first real-time AI avatar system integrating offline local LLM reasoning with custom GPT-SoVITS voice synthesis. Implemented word-level streaming to enable audio synthesis while LLM inference occurs, balancing CPU/GPU resource allocations and managing conversational context with SQLite within an 8GB VRAM constraint.
-      </p>
-
-      <div class="visual-display" style="position: relative; overflow: hidden; background: #0c0a09; border-radius: 8px;">
-        <video 
-          id="visageVideo"
-          src="assets/visage-link-demo.mp4" 
-          poster="assets/visage-link.jpg"
-          preload="metadata"
-          playsinline
-          controls
-          style="width: 100%; height: auto; display: block; border-radius: 8px;"
-        >
-          Your browser does not support the video tag.
-        </video>
-
-      </div>
-
-      <!-- Clean Engineering Architecture Strip (Authentic & Dignified) -->
-      <div class="visage-specs-strip">
-        <div class="visage-spec-col">
-          <span class="vspec-num">01 / REASONING</span>
-          <span class="vspec-title">Local LLM Inference</span>
-          <p class="vspec-desc">Quantized language model executing on-device, streaming tokens to minimize response latency.</p>
-        </div>
-        <div class="visage-spec-col">
-          <span class="vspec-num">02 / SYNTHESIS</span>
-          <span class="vspec-title">Word-Level Streaming</span>
-          <p class="vspec-desc">Custom GPT-SoVITS voice pipeline synthesizing speech concurrently with LLM token streaming.</p>
-        </div>
-        <div class="visage-spec-col">
-          <span class="vspec-num">03 / TRACKING</span>
-          <span class="vspec-title">VMC / OSC Lip-Sync</span>
-          <p class="vspec-desc">Low-latency UDP packets driving real-time 3D facial blendshape morphs on the avatar model.</p>
-        </div>
-        <div class="visage-spec-col">
-          <span class="vspec-num">04 / HARDWARE</span>
-          <span class="vspec-title">8GB VRAM Budget</span>
-          <p class="vspec-desc">Strict memory allocation balancing model weights and audio buffers, with conversational memory in SQLite.</p>
-        </div>
-      </div>
-
-      <div class="link-row">
-        <a class="claude-link" href="https://github.com/zevlord/Visage-Link" target="_blank" rel="noopener">
-          View Repository on GitHub <span>&rarr;</span>
-        </a>
-        <button class="claude-link" onclick="toggleVisageDrawer(event)" style="margin-left: 20px;">
-          Architecture &amp; Code Specs <span>&darr;</span>
-        </button>
-        <button class="claude-link" onclick="playVisageDemo(event)" style="margin-left: 20px;">
-          Play Japanese Voice Demo <span>&#9658;</span>
-        </button>
-        <span class="tech-spec">Python &middot; GPT-SoVITS &middot; SQLite &middot; VMC / OSC Protocol</span>
-      </div>
-
-      <!-- Expandable Architecture Drawer with Live Python & Protocol Specs -->
-      <div id="visageDrawer" class="sap-details-drawer">
-        <div style="margin-bottom: 16px; padding: 12px 16px; background: rgba(140, 72, 48, 0.06); border-radius: 6px; font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
-          <strong style="color: var(--terracotta);">Engineering Implementation Note:</strong> Engineered to achieve low-latency interactive avatar conversation on single-consumer hardware (NVIDIA RTX 8GB VRAM). Combines quantized Ollama LLM streaming, asynchronous GPT-SoVITS Japanese voice synthesis, SQLite BLOB vector indexing, and VMC/OSC 60 FPS blendshape tracking.
-        </div>
-
-        <div class="sap-console-tabs">
-          <button class="sap-console-tab is-active" id="visageTabSpecs" onclick="switchVisageTab('specs')">System Specs (8GB VRAM)</button>
-          <button class="sap-console-tab" id="visageTabStream" onclick="switchVisageTab('stream')">Streaming Pipeline (chat_handler.py)</button>
-          <button class="sap-console-tab" id="visageTabMemory" onclick="switchVisageTab('memory')">SQLite BLOB Memory (memory.py)</button>
-          <button class="sap-console-tab" id="visageTabOsc" onclick="switchVisageTab('osc')">VMC/OSC Blendshapes (vseeface_control.js)</button>
-        </div>
-
-        <!-- Pane 1: Hardware & System Specs -->
-        <div id="visagePaneSpecs" class="sap-pane is-active">
-          <div style="font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 8px;">
-            Visage Link &mdash; Dual-Engine Real-Time System Architecture
+  <!-- Pinned Full-Viewport Exhibition Stage: Selected Work (01 / 03 -> 03 / 03) -->
+  <section class="work-stage-runway" id="work">
+    <div class="work-stage-sticky" id="workStageSticky">
+      <div class="container work-stage-shell">
+        <!-- Top Stage Meta -->
+        <div class="work-stage-topbar">
+          <div class="work-stage-kicker">
+            <span class="work-kicker-line" aria-hidden="true"></span>
+            <span>Selected Work</span>
           </div>
-          <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
-            Designed to fit within a strict 8GB consumer GPU budget. Memory allocations are locked so LLM inference and neural audio synthesis run concurrently without triggering CUDA out-of-memory errors or page swapping.
-          </p>
+          <div class="work-stage-counter" id="workCounter">01 / 03</div>
+        </div>
 
-          <div class="sap-specs-grid">
-            <div class="sap-spec-item">
-              <span class="sap-spec-label">Language Model Host</span>
-              <span class="sap-spec-value">Ollama local daemon &middot; Qwen 2.5 7B (quantized Q4_K_M ~4.7 GB)</span>
-            </div>
-            <div class="sap-spec-item">
-              <span class="sap-spec-label">Voice Synthesis Engine</span>
-              <span class="sap-spec-value">GPT-SoVITS V2 &middot; Zero Two zero-shot voice clone (~2.1 GB VRAM)</span>
-            </div>
-            <div class="sap-spec-item">
-              <span class="sap-spec-label">Avatar Renderer &amp; Protocol</span>
-              <span class="sap-spec-value">VSeeFace &middot; VMC / OSC UDP port 39539 (~0.8 GB VRAM)</span>
-            </div>
-            <div class="sap-spec-item">
-              <span class="sap-spec-label">Long-Term Vector Memory</span>
-              <span class="sap-spec-value">SQLite3 BLOB (768-dim nomic-embed-text) &middot; CPU / RAM (0 GB VRAM)</span>
+        <!-- Center Split Stage -->
+        <div class="work-stage-grid">
+          <!-- Left: Narrative Panels -->
+          <div class="work-panels-wrap">
+            <!-- Panel 01: Visage Link -->
+            <article class="work-panel is-active" id="workPanel0" data-index="0">
+              <div class="work-panel__mobile-badge">01 &mdash; Voice AI &amp; Avatars</div>
+              <h2 class="work-panel__title">Visage Link</h2>
+              <div class="work-panel__role">Local-First Real-Time AI Avatar &middot; 2025</div>
+              <p class="work-panel__desc">
+                Offline real-time AI avatar integrating local Qwen 2.5 7B inference with custom GPT-SoVITS Japanese synthesis. Built word-level audio streaming, SQLite 768-dim BLOB memory, and VMC/OSC blendshape tracking within a strict 8GB VRAM budget.
+              </p>
+
+              <div class="work-panel__specs">
+                <div class="work-spec-chip"><strong>Qwen 2.5 7B</strong><span>Ollama Local</span></div>
+                <div class="work-spec-chip"><strong>GPT-SoVITS V2</strong><span>Word-Stream</span></div>
+                <div class="work-spec-chip"><strong>VMC / OSC</strong><span>UDP :39539</span></div>
+                <div class="work-spec-chip"><strong>8 GB VRAM</strong><span>SQLite RAG</span></div>
+              </div>
+
+              <div class="work-panel__actions">
+                <button type="button" class="work-btn-primary" id="visagePlayBtn" onclick="playVisageDemo(event)">
+                  <span>Play Japanese Demo</span>
+                  <span>&#9658;</span>
+                </button>
+                <button type="button" class="claude-link" onclick="openCaseStudyModal('visage')">
+                  Architecture &amp; Code <span>&nearr;</span>
+                </button>
+                <a class="claude-link" href="https://github.com/zevlord/Visage-Link" target="_blank" rel="noopener">
+                  GitHub <span>&rarr;</span>
+                </a>
+              </div>
+            </article>
+
+            <!-- Panel 02: 12.6M Retail Forecasting -->
+            <article class="work-panel" id="workPanel1" data-index="1">
+              <div class="work-panel__mobile-badge">02 &mdash; Demand Forecasting</div>
+              <h2 class="work-panel__title">12.6M Retail Forecasting</h2>
+              <div class="work-panel__role">Time-Series Analytics &middot; IS388 Data Analysis</div>
+              <p class="work-panel__desc">
+                End-to-end time-series study across 12.6M+ retail transactions (<code>salesFinal2016.csv</code>, 1.6 GB) using 100k-row chunkwise ingestion and the 6-phase CRISP-DM lifecycle, benchmarking Prophet against SARIMAX to prevent inventory stockouts.
+              </p>
+
+              <div class="work-panel__specs">
+                <div class="work-spec-chip"><strong>12.6M+</strong><span>Transactions</span></div>
+                <div class="work-spec-chip"><strong>R&sup2; 0.835</strong><span>Prophet Winner</span></div>
+                <div class="work-spec-chip"><strong>R&sup2; 0.485</strong><span>SARIMAX</span></div>
+                <div class="work-spec-chip"><strong>CRISP-DM</strong><span>100k Chunks</span></div>
+              </div>
+
+              <div class="work-panel__actions">
+                <button type="button" class="work-btn-primary" onclick="openCaseStudyModal('forecasting')">
+                  <span>Benchmark Matrix</span>
+                  <span>&nearr;</span>
+                </button>
+                <a class="claude-link" href="https://github.com/zevlord/inventory-forecasting" target="_blank" rel="noopener">
+                  View Repository on GitHub <span>&rarr;</span>
+                </a>
+              </div>
+            </article>
+
+            <!-- Panel 03: SAP S/4HANA Analytics -->
+            <article class="work-panel" id="workPanel2" data-index="2">
+              <div class="work-panel__mobile-badge">03 &mdash; Enterprise Systems</div>
+              <h2 class="work-panel__title">SAP S/4HANA Analytics</h2>
+              <div class="work-panel__role">ABAP DPC_EXT &amp; SAPUI5 Fiori ALP &middot; IS539</div>
+              <p class="work-panel__desc">
+                Enterprise office supply expense analytics built on SAP S/4HANA. Implemented custom ABAP Data Provider Classes (<code>DPC_EXT</code>) with dynamic OpenSQL table joins over OData Gateway (<code>Z_EXP_FIORI_SRV</code>) driving an annotated Fiori Analytical List Page.
+              </p>
+
+              <div class="work-panel__specs">
+                <div class="work-spec-chip"><strong>UI5 1.108</strong><span>Fiori ALP V2</span></div>
+                <div class="work-spec-chip"><strong>ABAP DPC_EXT</strong><span>Dynamic OpenSQL</span></div>
+                <div class="work-spec-chip"><strong>OData V2</strong><span>ExpenseSet</span></div>
+                <div class="work-spec-chip"><strong>TU Munich</strong><span>IS539 Exam</span></div>
+              </div>
+
+              <div class="work-panel__actions">
+                <button type="button" class="work-btn-primary" onclick="openCaseStudyModal('sap')">
+                  <span>Inspect UI, ABAP &amp; Schema</span>
+                  <span>&nearr;</span>
+                </button>
+                <a class="claude-link" href="https://github.com/zevlord/sap-fiori-office-supply-report" target="_blank" rel="noopener">
+                  View Repository on GitHub <span>&rarr;</span>
+                </a>
+              </div>
+            </article>
+          </div>
+
+          <!-- Right: Interactive Shader-Rippled Visual Stage -->
+          <div class="exhibit-media-stage" id="exhibitMediaStage">
+            <div class="exhibit-media-frame" id="exhibitMediaFrame">
+              <!-- Slide 0: Visage Link Video -->
+              <div class="exhibit-slide is-active" id="exhibitSlide0">
+                <video
+                  id="visageVideo"
+                  src="assets/visage-link-demo.mp4"
+                  poster="assets/visage-link.jpg"
+                  preload="metadata"
+                  playsinline
+                  controls
+                >
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+
+              <!-- Slide 1: Retail Forecasting -->
+              <div class="exhibit-slide" id="exhibitSlide1">
+                <img
+                  id="forecastImg"
+                  src="assets/retail-forecasting.jpg"
+                  alt="12.6M Retail Transaction Time-Series Forecasting Visual"
+                  loading="eager"
+                >
+              </div>
+
+              <!-- Slide 2: SAP Fiori Dashboard -->
+              <div class="exhibit-slide" id="exhibitSlide2" onclick="openImageModal('assets/sap-fiori-dashboard.png', 'SAP Fiori — Monthly Office Supply Expense Analytics', 'Executive Expenditure Dashboard running on SAP S/4HANA with smart filter bar, active department chips, and interactive analytical ledger')" style="cursor: pointer;">
+                <img
+                  id="sapDashboardImg"
+                  src="assets/sap-fiori-dashboard.png"
+                  alt="SAP S/4HANA Monthly Office Supply Expense Analytics Dashboard"
+                  loading="eager"
+                >
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Pane 2: Streaming Pipeline -->
-        <div id="visagePaneStream" class="sap-pane">
-          <div class="odata-endpoint-badge">server/chat_handler.py &middot; Asynchronous Sentence Splitting &amp; Queue Overlap</div>
-          <div class="odata-code-block"><pre style="margin:0; font-family:var(--font-mono); font-size:12px; line-height:1.55; color:#e0d8c8;"><span style="color:#d97757;">DELIMITERS</span> = set(<span style="color:#a8c97f;">"。！？!?\n"</span>)
-
-<span style="color:#7fa4c9;">async def</span> <span style="color:#f7efe1;">run_llm_speech_pipeline</span>(prompt: str, emotion_hint: str):
-    <span style="color:#8a8276;"># Stream tokens directly from local Ollama endpoint without waiting for full response</span>
-    buffer = []
-    <span style="color:#7fa4c9;">async for</span> chunk <span style="color:#7fa4c9;">in</span> ollama_client.astream(model=<span style="color:#a8c97f;">"qwen2.5:7b"</span>, prompt=prompt):
-        text = chunk[<span style="color:#a8c97f;">"response"</span>]
-        buffer.append(text)
-        
-        <span style="color:#8a8276;"># Punctuation boundary reached: synthesize speech sentence-by-sentence</span>
-        <span style="color:#7fa4c9;">if</span> any(d <span style="color:#7fa4c9;">in</span> text <span style="color:#7fa4c9;">for</span> d <span style="color:#7fa4c9;">in</span> DELIMITERS):
-            sentence = <span style="color:#a8c97f;">""</span>.join(buffer).strip()
-            buffer.clear()
-            <span style="color:#7fa4c9;">if</span> sentence:
-                <span style="color:#8a8276;"># Dispatch to GPT-SoVITS concurrent worker while LLM continues next clause</span>
-                <span style="color:#7fa4c9;">await</span> speech_queue.put({<span style="color:#a8c97f;">"text"</span>: sentence, <span style="color:#a8c97f;">"emotion"</span>: emotion_hint})</pre></div>
-        </div>
-
-        <!-- Pane 3: SQLite Memory -->
-        <div id="visagePaneMemory" class="sap-pane">
-          <div class="odata-endpoint-badge">server/memory.py &middot; Binary Vector BLOB Storage &amp; In-Memory Cosine Similarity</div>
-          <div class="odata-code-block"><pre style="margin:0; font-family:var(--font-mono); font-size:12px; line-height:1.55; color:#e0d8c8;"><span style="color:#8a8276;"># Dual-source schema avoiding external vector DB memory overhead</span>
-cursor.execute(<span style="color:#a8c97f;">"""
-    CREATE TABLE IF NOT EXISTS knowledge_chunks (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        doc_id TEXT NOT NULL,
-        chunk_text TEXT NOT NULL,
-        embedding BLOB NOT NULL -- 768 float32 raw bytes (3,072 bytes per chunk)
-    )
-"""</span>)
-
-<span style="color:#7fa4c9;">def</span> <span style="color:#f7efe1;">query_memory</span>(query_vec: np.ndarray, top_k: int = 3):
-    rows = cursor.execute(<span style="color:#a8c97f;">"SELECT id, chunk_text, embedding FROM knowledge_chunks"</span>).fetchall()
-    scores = []
-    <span style="color:#7fa4c9;">for</span> row_id, text, blob <span style="color:#7fa4c9;">in</span> rows:
-        chunk_vec = np.frombuffer(blob, dtype=np.float32)
-        score = np.dot(query_vec, chunk_vec) / (np.linalg.norm(query_vec) * np.linalg.norm(chunk_vec))
-        scores.append((score, text))
-    scores.sort(key=<span style="color:#7fa4c9;">lambda</span> x: x[0], reverse=<span style="color:#d97757;">True</span>)
-    <span style="color:#7fa4c9;">return</span> [s[1] <span style="color:#7fa4c9;">for</span> s <span style="color:#7fa4c9;">in</span> scores[:top_k]]</pre></div>
-        </div>
-
-        <!-- Pane 4: VMC/OSC Protocol -->
-        <div id="visagePaneOsc" class="sap-pane">
-          <div class="odata-endpoint-badge">js/vseeface_control.js &middot; Low-Latency UDP OSC Packet Dispatch to Port 39539</div>
-          <div class="odata-code-block"><pre style="margin:0; font-family:var(--font-mono); font-size:12px; line-height:1.55; color:#e0d8c8;"><span style="color:#8a8276;">// VMC (Virtual Motion Capture) protocol transmission via WebSocket bridge</span>
-<span style="color:#7fa4c9;">function</span> <span style="color:#f7efe1;">sendVmcBlendshape</span>(blendShapeName, weight, durationMs = 1200) {
-    <span style="color:#7fa4c9;">const</span> payload = {
-        osc_address: <span style="color:#a8c97f;">"/VMC/Ext/Blend/Val"</span>,
-        args: [
-            { type: <span style="color:#a8c97f;">"string"</span>, value: blendShapeName }, <span style="color:#8a8276;">// "happy", "angry", "blink", "a"</span>
-            { type: <span style="color:#a8c97f;">"float"</span>,  value: parseFloat(weight) }    <span style="color:#8a8276;">// 0.0 - 1.0</span>
-        ]
-    };
-    socket.send(JSON.stringify(payload));
-    
-    <span style="color:#8a8276;">// Viseme decay timeout ensures natural facial relaxation without abrupt snapping</span>
-    <span style="color:#7fa4c9;">if</span> (durationMs &gt; 0) {
-        setTimeout(() =&gt; resetBlendshape(blendShapeName), durationMs);
-    }
-}</pre></div>
+        <!-- Bottom 3-Segment Interactive Progress Rail -->
+        <div class="work-progress-rail" role="tablist" aria-label="Selected Projects Progress">
+          <button type="button" class="work-rail-item is-active" id="workRail0" onclick="jumpToWorkSlide(0)" role="tab" aria-selected="true">
+            <div class="work-rail-bar"><span id="workRailFill0"></span></div>
+            <div class="work-rail-label"><span class="rail-num">01</span> VISAGE LINK</div>
+          </button>
+          <button type="button" class="work-rail-item" id="workRail1" onclick="jumpToWorkSlide(1)" role="tab" aria-selected="false">
+            <div class="work-rail-bar"><span id="workRailFill1"></span></div>
+            <div class="work-rail-label"><span class="rail-num">02</span> 12.6M FORECASTING</div>
+          </button>
+          <button type="button" class="work-rail-item" id="workRail2" onclick="jumpToWorkSlide(2)" role="tab" aria-selected="false">
+            <div class="work-rail-bar"><span id="workRailFill2"></span></div>
+            <div class="work-rail-label"><span class="rail-num">03</span> SAP S/4HANA</div>
+          </button>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Project 02: 12.6M Transaction Demand Forecasting (Asymmetric Split Workbench) -->
-  <section class="section" id="forecasting">
-    <div class="container">
-      <div class="split-workbench">
-        <!-- Left: Narrative, CRISP-DM Architecture & Actions -->
-        <div class="workbench-left">
-          <div class="section-label">02 &mdash; Demand Forecasting</div>
-          <h2 class="section-heading">12.6M Retail Demand Forecasting</h2>
-          <p class="section-desc">
-            End-to-end time-series forecasting study across a 12.6M+ transaction retail dataset (<code style="font-family: var(--font-mono); color: var(--terracotta);">salesFinal2016.csv</code>, 1.6 GB) executed for IS388 Data Analysis. Followed the 6-phase CRISP-DM lifecycle, engineering bulk bottle packaging features and chunkwise streaming ingestion (<code style="font-family: var(--font-mono);">chunksize=100k</code>) to optimize inventory replenishment.
-          </p>
-
-          <div class="crisp-metrics-grid">
-            <div class="crisp-card">
-              <span class="crisp-val">12.6M+</span>
-              <span class="crisp-desc">Sales Records (100k Chunk Processing)</span>
-            </div>
-            <div class="crisp-card">
-              <span class="crisp-val">0.835</span>
-              <span class="crisp-desc">Facebook Prophet R² Accuracy</span>
-            </div>
-            <div class="crisp-card">
-              <span class="crisp-val">CRISP-DM</span>
-              <span class="crisp-desc">Inventory Stockout Lifecycle</span>
-            </div>
-          </div>
-
-          <div class="link-row">
-            <a class="claude-link" href="https://github.com/zevlord/inventory-forecasting" target="_blank" rel="noopener">
-              View Repository on GitHub <span>&rarr;</span>
-            </a>
-            <span class="tech-spec">Python &middot; Prophet &middot; SARIMAX &middot; Statsmodels &middot; Pandas</span>
-          </div>
-        </div>
-
-        <!-- Right: Visual Display & Interactive Model Benchmark Switcher -->
-        <div class="workbench-right">
-          <div class="visual-display">
-            <img src="assets/retail-forecasting.jpg" alt="12.6M Retail Transaction Time-Series Forecasting Visual" loading="lazy">
-          </div>
-
-          <div class="benchmark-switcher">
-            <div class="benchmark-nav">
-              <button class="benchmark-tab is-active" id="tabProphet" onclick="switchBenchmark('prophet')">
-                Facebook Prophet <span class="tag-winner">R² 0.835</span>
-              </button>
-              <button class="benchmark-tab" id="tabSarimax" onclick="switchBenchmark('sarimax')">
-                SARIMAX (1,0,1)(0,1,1,7)
-              </button>
-              <button class="benchmark-tab" id="tabStationary" onclick="switchBenchmark('stationary')">
-                Stationarity &amp; Baseline
-              </button>
-            </div>
-
-            <div class="benchmark-stats">
-              <div class="bench-stat-row">
-                <span class="bench-label">Model Evaluation Metrics</span>
-                <span class="bench-val" id="benchMetrics" style="color: var(--terracotta);">R²: 0.8349 &middot; MAE: 90,516.00</span>
-              </div>
-              <div class="bench-stat-row">
-                <span class="bench-label">Mean Squared Error (MSE)</span>
-                <span class="bench-val" id="benchMse">29,565,117,580 (2.96e10)</span>
-              </div>
-              <div class="bench-stat-row">
-                <span class="bench-label">Time-Series Modeling Technique</span>
-                <span class="bench-val" id="benchSeason">Additive Seasonality with Weekly &amp; Holiday Decompositions</span>
-              </div>
-              <div class="bench-verdict" id="benchVerdict">
-                <strong>Coursework Finding:</strong> Prophet demonstrated the highest accuracy (R² = 0.835) across daily retail profit series by capturing non-linear calendar surges without parameter explosion.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Project 03: SAP S/4HANA Analytics (Visual-Heavy, Minimal Wording) -->
-  <section class="section" id="enterprise">
-    <div class="container">
-      <div class="section-label">03 &mdash; Enterprise Systems</div>
-
-      <h2 class="section-heading">SAP S/4HANA Analytics</h2>
-      <p class="section-desc">
-        Office supply expense analytics system on SAP S/4HANA. Developed custom ABAP Data Provider Classes (<code style="color: var(--terracotta);">DPC_EXT</code>) implementing dynamic OpenSQL queries and multi-table joins to serve transactional expense datasets via OData Gateway. Built an Analytical List Page (ALP) in SAPUI5 with XML annotations, integrating live dimension filters and cost aggregation charts.
-      </p>
-
-      <div class="visual-display">
-        <div class="sap-showcase-wrap" style="position: relative; cursor: pointer;" onclick="openImageModal('assets/sap-fiori-dashboard.png', 'SAP Fiori — Monthly Office Supply Expense Analytics', 'Executive Expenditure Dashboard running on SAP S/4HANA with smart filter bar, active department chips, and interactive analytical ledger')">
-        <img src="assets/sap-fiori-dashboard.png" alt="SAP S/4HANA Monthly Office Supply Expense Analytics Dashboard" loading="lazy" style="width: 100%; height: auto; display: block; border-radius: 4px;">
-
-      </div>
-
-      </div>
-
-      <div class="link-row">
-        <a class="claude-link" href="https://github.com/zevlord/sap-fiori-office-supply-report" target="_blank" rel="noopener">
-          View Repository on GitHub <span>&rarr;</span>
-        </a>
-        <button class="claude-link" onclick="toggleSapDrawer(event)" style="margin-left: 20px;">
-          Architecture &amp; Deployment Specs <span>&darr;</span>
-        </button>
-        <span class="tech-spec">ABAP &middot; SAP S/4HANA &middot; SAPUI5 / Fiori &middot; OData Service</span>
-      </div>
-
-      <!-- Expandable Architecture Drawer with Archival Code & Metadata Explorer -->
-      <div id="sapDrawer" class="sap-details-drawer">
-        <div style="margin-bottom: 16px; padding: 12px 16px; background: rgba(140, 72, 48, 0.06); border-radius: 6px; font-size: 13px; color: var(--text-secondary); line-height: 1.5;">
-          <strong style="color: var(--terracotta);">Academic Environment Note:</strong> Developed for IS539 ERP Programming on TU Munich UCC's SAP S/4HANA training server (<code style="font-family: var(--font-mono);">s40lp1.ucc.cit.tum.de:8100</code>). Live lab instance access concluded following course examination; full SAPUI5 application code, OData V2 EDM schema, and XML annotations are preserved in the repository.
-        </div>
-
-        <div class="sap-console-tabs">
-          <button class="sap-console-tab is-active" id="sapTabSpecs" onclick="switchSapTab('specs')">Architecture &amp; Specs</button>
-          <button class="sap-console-tab" id="sapTabScreens" onclick="switchSapTab('screens')">Live Fiori UI &amp; Code Evidence</button>
-          <button class="sap-console-tab" id="sapTabSchema" onclick="switchSapTab('schema')">EDM Schema ($metadata.xml)</button>
-          <button class="sap-console-tab" id="sapTabAnno" onclick="switchSapTab('anno')">Fiori Annotations (annotation.xml)</button>
-          <button class="sap-console-tab" id="sapTabMock" onclick="switchSapTab('mock')">Expense Entity Payload</button>
-        </div>
-
-        <!-- Pane: Live Fiori UI & ABAP Code Evidence -->
-        <div id="sapPaneScreens" class="sap-pane">
-          <div style="font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 8px;">
-            Verified Exam Lab Outputs &mdash; IS539 ERP Programming (TU Munich Server)
-          </div>
-          <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 16px;">
-            Live screenshots from Nikki's final exam implementation. Click any frame to inspect high-resolution details:
-          </p>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px;">
-            <div style="cursor: pointer; background: rgba(26,23,20,0.06); border: 1px solid var(--hairline); border-radius: 6px; padding: 12px; transition: border-color 0.2s;" onclick="openImageModal('assets/sap-fiori-dashboard.png', 'SAP Fiori Main Dashboard', 'Executive Expenditure Dashboard showing filtered monthly office supplies with live Smart Table and column adapters')">
-              <img src="assets/sap-fiori-dashboard.png" alt="SAP Fiori Dashboard" style="width: 100%; height: auto; border-radius: 4px; display: block;">
-              <span style="font-family: var(--font-mono); font-size: 11px; color: var(--terracotta); display: block; margin-top: 8px; font-weight: 500;">01 / Executive Expenditure Dashboard &rarr;</span>
-            </div>
-            <div style="cursor: pointer; background: rgba(26,23,20,0.06); border: 1px solid var(--hairline); border-radius: 6px; padding: 12px; transition: border-color 0.2s;" onclick="openImageModal('assets/sap-fiori-detail.png', 'SAP Fiori Object Page', 'Detailed transaction view showing Total Expenditure KPI (800,000 IDR) and cost center allocation')">
-              <img src="assets/sap-fiori-detail.png" alt="SAP Fiori Object Page" style="width: 100%; height: auto; border-radius: 4px; display: block;">
-              <span style="font-family: var(--font-mono); font-size: 11px; color: var(--terracotta); display: block; margin-top: 8px; font-weight: 500;">02 / Object Page &amp; KPI Breakdown &rarr;</span>
-            </div>
-            <div style="cursor: pointer; background: rgba(26,23,20,0.06); border: 1px solid var(--hairline); border-radius: 6px; padding: 12px; transition: border-color 0.2s;" onclick="openImageModal('assets/sap-abap-code.png', 'ABAP Data Provider Class (DPC_EXT)', 'Custom ABAP code in SAP GUI executing dynamic OpenSQL WHERE clauses with table joins')">
-              <img src="assets/sap-abap-code.png" alt="ABAP DPC_EXT Code" style="width: 100%; height: auto; border-radius: 4px; display: block;">
-              <span style="font-family: var(--font-mono); font-size: 11px; color: var(--terracotta); display: block; margin-top: 8px; font-weight: 500;">03 / ABAP Data Provider Class &rarr;</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pane 1: Architecture Specs -->
-        <div id="sapPaneSpecs" class="sap-pane is-active">
-          <div style="font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 8px;">
-            Monthly Office Supply Expense &mdash; System Architecture
-          </div>
-          <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
-            Analytical report designed with SAP Fiori Tools on VS Code. Serves expense ledgers via custom ABAP Data Provider Classes (<code style="font-family: var(--font-mono); color: var(--terracotta);">DPC_EXT</code>) executing dynamic OpenSQL joins across material and financial tables.
-          </p>
-
-          <div class="sap-specs-grid">
-            <div class="sap-spec-item">
-              <span class="sap-spec-label">Application Module</span>
-              <span class="sap-spec-value">zumn.is539.group2.officesupplyreport</span>
-            </div>
-            <div class="sap-spec-item">
-              <span class="sap-spec-label">UI5 Template &amp; Theme</span>
-              <span class="sap-spec-value">Analytical List Page V2 (UI5 1.108 / sap_horizon)</span>
-            </div>
-            <div class="sap-spec-item">
-              <span class="sap-spec-label">Backend OData Service</span>
-              <span class="sap-spec-value">/sap/opu/odata/sap/Z_EXP_FIORI_SRV/</span>
-            </div>
-            <div class="sap-spec-item">
-              <span class="sap-spec-label">Main Query Entity</span>
-              <span class="sap-spec-value">ExpenseSet (Key: TransId + ItemCode)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Pane 2: EDM Metadata Schema ($metadata.xml) -->
-        <div id="sapPaneSchema" class="sap-pane">
-          <span class="odata-endpoint-badge">Schema: Z_EXP_FIORI_SRV.Expense (OData V2 Metadata)</span>
-          <pre class="odata-code-block"><code>&lt;EntityType Name="Expense" sap:content-version="1"&gt;
-  &lt;Key&gt;
-    &lt;PropertyRef Name="TransId"/&gt;
-    &lt;PropertyRef Name="ItemCode"/&gt;
-  &lt;/Key&gt;
-  &lt;Property Name="TransId" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Transaction ID"/&gt;
-  &lt;Property Name="TransDate" Type="Edm.DateTime" Nullable="false" Precision="7" sap:label="Transaction Date"/&gt;
-  &lt;Property Name="DeptCode" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Department Code"/&gt;
-  &lt;Property Name="DeptName" Type="Edm.String" Nullable="false" MaxLength="50" sap:label="Department Name"/&gt;
-  &lt;Property Name="CostCenter" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Cost Center"/&gt;
-  &lt;Property Name="ItemCode" Type="Edm.String" Nullable="false" MaxLength="5" sap:label="Item Code"/&gt;
-  &lt;Property Name="ItemName" Type="Edm.String" Nullable="false" MaxLength="50" sap:label="Item Name"/&gt;
-  &lt;Property Name="Category" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Expense Category"/&gt;
-  &lt;Property Name="Quantity" Type="Edm.Int32" Nullable="false" sap:label="Quantity"/&gt;
-  &lt;Property Name="Unit" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Unit"/&gt;
-  &lt;Property Name="TotalExpenditure" Type="Edm.Decimal" Precision="15" Scale="2" sap:label="Total Expenditure"/&gt;
-&lt;/EntityType&gt;</code></pre>
-        </div>
-
-        <!-- Pane 3: UI Annotations (annotation.xml) -->
-        <div id="sapPaneAnno" class="sap-pane">
-          <span class="odata-endpoint-badge">Vocabulary: com.sap.vocabularies.UI.v1 (Analytical List Page Annotations)</span>
-          <pre class="odata-code-block"><code>&lt;!-- Interactive Chart: Spending by Department --&gt;
-&lt;Annotation Term="UI.Chart" Qualifier="SpendingByDepartment"&gt;
-  &lt;Record Type="UI.ChartDefinitionType"&gt;
-    &lt;PropertyValue Property="Title" String="{@i18n&gt;spendingByDepartment}"/&gt;
-    &lt;PropertyValue Property="ChartType" EnumMember="UI.ChartType/Donut"/&gt;
-    &lt;PropertyValue Property="Measures"&gt;
-      &lt;Collection&gt;&lt;PropertyPath&gt;TotalExpenditure&lt;/PropertyPath&gt;&lt;/Collection&gt;
-    &lt;/PropertyValue&gt;
-    &lt;PropertyValue Property="Dimensions"&gt;
-      &lt;Collection&gt;&lt;PropertyPath&gt;DeptName&lt;/PropertyPath&gt;&lt;/Collection&gt;
-    &lt;/PropertyValue&gt;
-  &lt;/Record&gt;
-&lt;/Annotation&gt;
-
-&lt;!-- Filter Bar &amp; LineItem Table Definitions --&gt;
-&lt;Annotation Term="UI.SelectionFields"&gt;
-  &lt;Collection&gt;
-    &lt;PropertyPath&gt;TransDate&lt;/PropertyPath&gt;
-    &lt;PropertyPath&gt;DeptName&lt;/PropertyPath&gt;
-    &lt;PropertyPath&gt;Category&lt;/PropertyPath&gt;
-  &lt;/Collection&gt;
-&lt;/Annotation&gt;</code></pre>
-        </div>
-
-        <!-- Pane 4: Sample Entity Payload -->
-        <div id="sapPaneMock" class="sap-pane">
-          <span class="odata-endpoint-badge">Payload: Z_EXP_FIORI_SRV/ExpenseSet (Normalized Currency IDR)</span>
-          <pre class="odata-code-block"><code>{
-  "d": {
-    "results": [
-      {
-        "__metadata": { "type": "Z_EXP_FIORI_SRV.Expense" },
-        "TransId": "TRX-001092",
-        "ItemCode": "OFF-04",
-        "TransDate": "2026-05-24T00:00:00",
-        "DeptCode": "FIN",
-        "DeptName": "Finance & Accounting",
-        "CostCenter": "CC-FIN-UMN",
-        "ItemName": "A4 Paper Ream (80 GSM)",
-        "Category": "Stationery",
-        "Quantity": 50,
-        "Unit": "BOX",
-        "TotalExpenditure": 2750000.00
-      },
-      {
-        "__metadata": { "type": "Z_EXP_FIORI_SRV.Expense" },
-        "TransId": "TRX-001093",
-        "ItemCode": "IT-12",
-        "TransDate": "2026-05-25T00:00:00",
-        "DeptCode": "INF",
-        "DeptName": "IT Infrastructure",
-        "CostCenter": "CC-IT-LABS",
-        "ItemName": "Cat6 Ethernet Patch Cable 3M",
-        "Category": "Peripherals",
-        "Quantity": 25,
-        "Unit": "PCS",
-        "TotalExpenditure": 1875000.00
-      }
-    ]
-  }
-}</code></pre>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Interactive Experience, Leadership & Credentials Timeline -->
+  <!-- Interactive Experience, Leadership & Credentials Timeline (Chronologia) -->
   <section class="section" id="background">
     <div class="bg-watermark bg-watermark--hand" aria-hidden="true">
       <img src="assets/layers/michelangelo_hand_ink.png" alt="" style="width:100%;height:auto;display:block;">
@@ -599,29 +405,30 @@ cursor.execute(<span style="color:#a8c97f;">"""
       <div class="section-label">04 &mdash; Experience &amp; Background</div>
       <h2 class="section-heading">Engineering projects, campus leadership, and verified credentials.</h2>
       <p class="section-desc">
-        This section shows documentation of my Hands-on work across local AI systems, time-series forecasting, relational databases, enterprise ERP, and campus organization.
+        This section shows documentation of my hands-on work across local AI systems, time-series forecasting, relational databases, enterprise ERP, and campus organization.
       </p>
 
       <div class="timeline-layout">
         <!-- Top Controls: Filter Pills -->
         <div class="timeline-controls-bar">
           <div class="timeline-filter-pills">
-            <button class="exp-filter-btn is-active" data-filter="all" onclick="filterTimeline('all')">All Work (6)</button>
-            <button class="exp-filter-btn" data-filter="engineering" onclick="filterTimeline('engineering')">Engineering &amp; Systems (2)</button>
-            <button class="exp-filter-btn" data-filter="leadership" onclick="filterTimeline('leadership')">Leadership &amp; Mentorship (2)</button>
-            <button class="exp-filter-btn" data-filter="credentials" onclick="filterTimeline('credentials')">Education &amp; Credentials (2)</button>
+            <button type="button" class="exp-filter-btn is-active" data-filter="all" onclick="filterTimeline('all')">All Work (6)</button>
+            <button type="button" class="exp-filter-btn" data-filter="engineering" onclick="filterTimeline('engineering')">Engineering &amp; Systems (2)</button>
+            <button type="button" class="exp-filter-btn" data-filter="leadership" onclick="filterTimeline('leadership')">Leadership &amp; Mentorship (2)</button>
+            <button type="button" class="exp-filter-btn" data-filter="credentials" onclick="filterTimeline('credentials')">Education &amp; Credentials (2)</button>
           </div>
         </div>
 
         <!-- Master Timeline Stream -->
         <div class="timeline-stream" id="timelineStream">
+          <div class="timeline-spine-progress" id="timelineSpineProgress" aria-hidden="true"></div>
 
           <!-- Milestone 1: Argos Club -->
           <article class="timeline-node" id="milestone-argos" data-category="leadership">
             <div class="timeline-marker" aria-hidden="true"></div>
             <div class="timeline-card">
               <div class="timeline-card__top">
-                <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                   <span class="timeline-date-badge">Sep 2026 &ndash; Present</span>
                   <span class="timeline-cat-badge">Comms Member &middot; Technical Workshop Support</span>
                 </div>
@@ -634,7 +441,6 @@ cursor.execute(<span style="color:#a8c97f;">"""
                 Provided technical guidance to 10+ participants during campus workshops on server virtualization and workflow automation. Assisted participants with Proxmox VE installation, basic user setup, and NetBird configuration during hands-on sessions. Directed and edited video documentation for workshop sessions.
               </p>
 
-              <!-- Interactive Video Preview Trigger -->
               <div class="exp-card__media-preview" onclick="openVideoModal('assets/argos-n8n.mp4', 'Argos Club — n8n Automation &amp; Infrastructure Documentation', 'Technical workshop video documentation edited by Nikki Tirta Iwan (1m 51s)')">
                 <img src="assets/argos-n8n-poster.jpg" alt="Argos Club Workshop Video Documentation Poster" loading="lazy">
                 <div class="media-play-overlay">
@@ -652,7 +458,7 @@ cursor.execute(<span style="color:#a8c97f;">"""
               </div>
 
               <div class="exp-card__footer">
-                <button class="card-action-btn" onclick="openVideoModal('assets/argos-n8n.mp4', 'Argos Club — n8n Automation &amp; Infrastructure Documentation', 'Technical workshop video documentation edited by Nikki Tirta Iwan (1m 51s)')">
+                <button type="button" class="card-action-btn" onclick="openVideoModal('assets/argos-n8n.mp4', 'Argos Club — n8n Automation &amp; Infrastructure Documentation', 'Technical workshop video documentation edited by Nikki Tirta Iwan (1m 51s)')">
                   <span>&#9658;</span> Watch Workshop Video (01:51)
                 </button>
                 <span class="card-tag">Workshop Support &middot; Documentation</span>
@@ -665,7 +471,7 @@ cursor.execute(<span style="color:#a8c97f;">"""
             <div class="timeline-marker" aria-hidden="true"></div>
             <div class="timeline-card">
               <div class="timeline-card__top">
-                <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                   <span class="timeline-date-badge">2026</span>
                   <span class="timeline-cat-badge">Certifications &amp; Credentials</span>
                 </div>
@@ -679,7 +485,6 @@ cursor.execute(<span style="color:#a8c97f;">"""
               </p>
 
               <div class="cert-grid-compact">
-                <!-- Cert 1 -->
                 <div class="cert-pill-item" onclick="openImageModal('assets/certs/cert_ibm_final.png', 'IBM SkillsBuild: AI Agent for Legal', 'IBM & Google AI Studio (2026) &middot; Credential ID: 16225/H8/CSR/ISUE/V/2026 &middot; Issued to Nikki Tirta Iwan')">
                   <div>
                     <div class="cert-pill-title">AI Agent for Legal</div>
@@ -688,7 +493,6 @@ cursor.execute(<span style="color:#a8c97f;">"""
                   <div class="cert-pill-btn">Inspect &rarr;</div>
                 </div>
 
-                <!-- Cert 2 -->
                 <div class="cert-pill-item" onclick="openImageModal('assets/certs/cert_skillsbuild_ai_literacy.png', 'IBM SkillsBuild: AI Literacy', 'IBM (2026) &middot; Credential ID: PLAN-1C903152880C &middot; Issued to Nikki Tirta Iwan')">
                   <div>
                     <div class="cert-pill-title">AI Literacy</div>
@@ -697,7 +501,6 @@ cursor.execute(<span style="color:#a8c97f;">"""
                   <div class="cert-pill-btn">Inspect &rarr;</div>
                 </div>
 
-                <!-- Supporting Course Module -->
                 <div class="cert-pill-item" onclick="openImageModal('assets/certs/cert_ai_agents.png', 'Adobe Learning Manager: Unleashing the Power of AI Agents', 'Course ID: ALM-COURSE_3825456 &middot; Completed Sep 2026')">
                   <div>
                     <div class="cert-pill-title">Unleashing the Power of AI Agents</div>
@@ -706,7 +509,6 @@ cursor.execute(<span style="color:#a8c97f;">"""
                   <div class="cert-pill-btn">Inspect &rarr;</div>
                 </div>
 
-                <!-- Official Platform Record -->
                 <div class="cert-pill-item" onclick="openImageModal('assets/certs/Bukti.png', 'IBM SkillsBuild Verification Portal', 'Official platform completion record for Nikki Tirta Iwan')">
                   <div>
                     <div class="cert-pill-title">SkillsBuild Platform Record</div>
@@ -717,7 +519,7 @@ cursor.execute(<span style="color:#a8c97f;">"""
               </div>
 
               <div class="exp-card__footer">
-                <button class="card-action-btn" onclick="openImageModal('assets/certs/cert_ibm_final.png', 'IBM SkillsBuild: AI Agent for Legal', 'IBM & Google AI Studio (2026) &middot; Credential ID: 16225/H8/CSR/ISUE/V/2026')">
+                <button type="button" class="card-action-btn" onclick="openImageModal('assets/certs/cert_ibm_final.png', 'IBM SkillsBuild: AI Agent for Legal', 'IBM & Google AI Studio (2026) &middot; Credential ID: 16225/H8/CSR/ISUE/V/2026')">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: -2px; margin-right: 6px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Inspect Certificate
                 </button>
                 <span class="card-tag">Verified Platform Credentials</span>
@@ -730,7 +532,7 @@ cursor.execute(<span style="color:#a8c97f;">"""
             <div class="timeline-marker" aria-hidden="true"></div>
             <div class="timeline-card">
               <div class="timeline-card__top">
-                <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                   <span class="timeline-date-badge">2025 &ndash; 2026</span>
                   <span class="timeline-cat-badge">Desktop System &middot; C# .NET</span>
                 </div>
@@ -766,7 +568,7 @@ cursor.execute(<span style="color:#a8c97f;">"""
             <div class="timeline-marker" aria-hidden="true"></div>
             <div class="timeline-card">
               <div class="timeline-card__top">
-                <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                   <span class="timeline-date-badge">May 2025 &ndash; Sep 2025</span>
                   <span class="timeline-cat-badge">Person In Charge (PIC) &middot; Mentorship</span>
                 </div>
@@ -779,7 +581,6 @@ cursor.execute(<span style="color:#a8c97f;">"""
                 Mentored 7 incoming Information Systems freshmen during a 3-day orientation program, guiding academic adaptation and curriculum navigation. Monitored student attendance, assignment compliance, and event discipline while coordinating with other committee members.
               </p>
 
-              <!-- Interactive Photo Preview Trigger -->
               <div class="exp-card__media-preview" onclick="openImageModal('assets/perprod-mentor.jpg', 'Freshman Orientation (Perkenalan Prodi SI) Mentorship', 'Nikki Tirta Iwan with the orientation committee and freshman cohort at Universitas Multimedia Nusantara')">
                 <img src="assets/perprod-mentor.jpg" alt="Freshman Orientation Mentorship Group at UMN" loading="lazy">
                 <div class="media-play-overlay">
@@ -798,7 +599,7 @@ cursor.execute(<span style="color:#a8c97f;">"""
               </div>
 
               <div class="exp-card__footer">
-                <button class="card-action-btn" onclick="openImageModal('assets/perprod-mentor.jpg', 'Freshman Orientation (Perkenalan Prodi SI) Mentorship', 'Nikki Tirta Iwan with the orientation committee and freshman cohort at Universitas Multimedia Nusantara')">
+                <button type="button" class="card-action-btn" onclick="openImageModal('assets/perprod-mentor.jpg', 'Freshman Orientation (Perkenalan Prodi SI) Mentorship', 'Nikki Tirta Iwan with the orientation committee and freshman cohort at Universitas Multimedia Nusantara')">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: -2px; margin-right: 6px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>View Mentorship Photo
                 </button>
                 <span class="card-tag">Student Guidance &middot; Operations</span>
@@ -811,7 +612,7 @@ cursor.execute(<span style="color:#a8c97f;">"""
             <div class="timeline-marker" aria-hidden="true"></div>
             <div class="timeline-card">
               <div class="timeline-card__top">
-                <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                   <span class="timeline-date-badge">2025</span>
                   <span class="timeline-cat-badge">Automation &middot; Google Apps Script</span>
                 </div>
@@ -846,7 +647,7 @@ cursor.execute(<span style="color:#a8c97f;">"""
             <div class="timeline-marker" aria-hidden="true"></div>
             <div class="timeline-card">
               <div class="timeline-card__top">
-                <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                   <span class="timeline-date-badge">Aug 2024 &ndash; Aug 2028 (Expected)</span>
                   <span class="timeline-cat-badge">Education &middot; Bachelor of Science</span>
                 </div>
@@ -884,10 +685,15 @@ cursor.execute(<span style="color:#a8c97f;">"""
 
 </main>
 
-<!-- Footer / Direct Inquiries -->
+<!-- Footer / Interactive Renaissance Canvas -->
 <footer class="footer" id="contact">
+  <canvas id="footerFluidCanvas" class="footer-fluid-canvas" aria-hidden="true"></canvas>
+  <div id="footerSpotlight" class="footer-spotlight" aria-hidden="true"></div>
   <div class="container">
-    <div class="section-label">Contact</div>
+    <div class="footer-topbar">
+      <div class="section-label">Contact</div>
+      <a href="#top" class="footer-back-top">Back to top &uarr;</a>
+    </div>
 
     <h2 class="footer-heading">Let's connect.</h2>
     <p class="footer-desc">
@@ -913,6 +719,334 @@ cursor.execute(<span style="color:#a8c97f;">"""
   </div>
 </footer>
 
+<!-- Technical Case Study & Blueprint Modal (Hosts Visage Specs, Forecasting Benchmark, SAP Explorer) -->
+<div id="caseStudyModal" class="case-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Technical Case Study">
+  <div class="case-modal__backdrop" onclick="closeCaseStudyModal()"></div>
+  <div class="case-modal__container">
+    <div class="case-modal__header">
+      <div class="case-modal__switcher">
+        <button type="button" class="case-switch-btn is-active" id="caseBtnVisage" onclick="switchCaseSection('visage')">01 Visage Link</button>
+        <button type="button" class="case-switch-btn" id="caseBtnForecasting" onclick="switchCaseSection('forecasting')">02 Forecasting</button>
+        <button type="button" class="case-switch-btn" id="caseBtnSap" onclick="switchCaseSection('sap')">03 SAP S/4HANA</button>
+      </div>
+      <button type="button" class="media-modal__close-btn" onclick="closeCaseStudyModal()" aria-label="Close Technical Specs">&times; Close (Esc)</button>
+    </div>
+
+    <div class="case-modal__body" data-lenis-prevent>
+      <!-- CASE STUDY 01: VISAGE LINK -->
+      <div id="casePaneVisage" class="case-pane is-active">
+        <div class="case-note-banner">
+          <strong style="color: var(--terracotta);">Engineering Implementation Note:</strong> Engineered to achieve low-latency interactive avatar conversation on single-consumer hardware (NVIDIA RTX 8GB VRAM). Combines quantized Ollama LLM streaming, asynchronous GPT-SoVITS Japanese voice synthesis, SQLite BLOB vector indexing, and VMC/OSC 60 FPS blendshape tracking.
+        </div>
+
+        <div class="sap-console-tabs">
+          <button type="button" class="sap-console-tab is-active" id="visageTabSpecs" onclick="switchVisageTab('specs')">System Specs (8GB VRAM)</button>
+          <button type="button" class="sap-console-tab" id="visageTabStream" onclick="switchVisageTab('stream')">Streaming Pipeline (chat_handler.py)</button>
+          <button type="button" class="sap-console-tab" id="visageTabMemory" onclick="switchVisageTab('memory')">SQLite BLOB Memory (memory.py)</button>
+          <button type="button" class="sap-console-tab" id="visageTabOsc" onclick="switchVisageTab('osc')">VMC/OSC Blendshapes (vseeface_control.js)</button>
+        </div>
+
+        <div id="visagePaneSpecs" class="sap-pane is-active">
+          <div style="font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 8px;">
+            Visage Link &mdash; Dual-Engine Real-Time System Architecture
+          </div>
+          <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+            Designed to fit within a strict 8GB consumer GPU budget. Memory allocations are locked so LLM inference and neural audio synthesis run concurrently without triggering CUDA out-of-memory errors or page swapping.
+          </p>
+          <div class="sap-specs-grid">
+            <div class="sap-spec-item">
+              <span class="sap-spec-label">Language Model Host</span>
+              <span class="sap-spec-value">Ollama local daemon &middot; Qwen 2.5 7B (quantized Q4_K_M ~4.7 GB)</span>
+            </div>
+            <div class="sap-spec-item">
+              <span class="sap-spec-label">Voice Synthesis Engine</span>
+              <span class="sap-spec-value">GPT-SoVITS V2 &middot; Zero Two zero-shot voice clone (~2.1 GB VRAM)</span>
+            </div>
+            <div class="sap-spec-item">
+              <span class="sap-spec-label">Avatar Renderer &amp; Protocol</span>
+              <span class="sap-spec-value">VSeeFace &middot; VMC / OSC UDP port 39539 (~0.8 GB VRAM)</span>
+            </div>
+            <div class="sap-spec-item">
+              <span class="sap-spec-label">Long-Term Vector Memory</span>
+              <span class="sap-spec-value">SQLite3 BLOB (768-dim nomic-embed-text) &middot; CPU / RAM (0 GB VRAM)</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="visagePaneStream" class="sap-pane">
+          <div class="odata-endpoint-badge">server/chat_handler.py &middot; Asynchronous Sentence Splitting &amp; Queue Overlap</div>
+          <div class="odata-code-block"><pre style="margin:0; font-family:var(--font-mono); font-size:12px; line-height:1.55; color:#e0d8c8;"><span style="color:#d97757;">DELIMITERS</span> = set(<span style="color:#a8c97f;">"。！？!?\n"</span>)
+
+<span style="color:#7fa4c9;">async def</span> <span style="color:#f7efe1;">run_llm_speech_pipeline</span>(prompt: str, emotion_hint: str):
+    <span style="color:#8a8276;"># Stream tokens directly from local Ollama endpoint without waiting for full response</span>
+    buffer = []
+    <span style="color:#7fa4c9;">async for</span> chunk <span style="color:#7fa4c9;">in</span> ollama_client.astream(model=<span style="color:#a8c97f;">"qwen2.5:7b"</span>, prompt=prompt):
+        text = chunk[<span style="color:#a8c97f;">"response"</span>]
+        buffer.append(text)
+
+        <span style="color:#8a8276;"># Punctuation boundary reached: synthesize speech sentence-by-sentence</span>
+        <span style="color:#7fa4c9;">if</span> any(d <span style="color:#7fa4c9;">in</span> text <span style="color:#7fa4c9;">for</span> d <span style="color:#7fa4c9;">in</span> DELIMITERS):
+            sentence = <span style="color:#a8c97f;">""</span>.join(buffer).strip()
+            buffer.clear()
+            <span style="color:#7fa4c9;">if</span> sentence:
+                <span style="color:#8a8276;"># Dispatch to GPT-SoVITS concurrent worker while LLM continues next clause</span>
+                <span style="color:#7fa4c9;">await</span> speech_queue.put({<span style="color:#a8c97f;">"text"</span>: sentence, <span style="color:#a8c97f;">"emotion"</span>: emotion_hint})</pre></div>
+        </div>
+
+        <div id="visagePaneMemory" class="sap-pane">
+          <div class="odata-endpoint-badge">server/memory.py &middot; Binary Vector BLOB Storage &amp; In-Memory Cosine Similarity</div>
+          <div class="odata-code-block"><pre style="margin:0; font-family:var(--font-mono); font-size:12px; line-height:1.55; color:#e0d8c8;"><span style="color:#8a8276;"># Dual-source schema avoiding external vector DB memory overhead</span>
+cursor.execute(<span style="color:#a8c97f;">"""
+    CREATE TABLE IF NOT EXISTS knowledge_chunks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        doc_id TEXT NOT NULL,
+        chunk_text TEXT NOT NULL,
+        embedding BLOB NOT NULL -- 768 float32 raw bytes (3,072 bytes per chunk)
+    )
+"""</span>)
+
+<span style="color:#7fa4c9;">def</span> <span style="color:#f7efe1;">query_memory</span>(query_vec: np.ndarray, top_k: int = 3):
+    rows = cursor.execute(<span style="color:#a8c97f;">"SELECT id, chunk_text, embedding FROM knowledge_chunks"</span>).fetchall()
+    scores = []
+    <span style="color:#7fa4c9;">for</span> row_id, text, blob <span style="color:#7fa4c9;">in</span> rows:
+        chunk_vec = np.frombuffer(blob, dtype=np.float32)
+        score = np.dot(query_vec, chunk_vec) / (np.linalg.norm(query_vec) * np.linalg.norm(chunk_vec))
+        scores.append((score, text))
+    scores.sort(key=<span style="color:#7fa4c9;">lambda</span> x: x[0], reverse=<span style="color:#d97757;">True</span>)
+    <span style="color:#7fa4c9;">return</span> [s[1] <span style="color:#7fa4c9;">for</span> s <span style="color:#7fa4c9;">in</span> scores[:top_k]]</pre></div>
+        </div>
+
+        <div id="visagePaneOsc" class="sap-pane">
+          <div class="odata-endpoint-badge">js/vseeface_control.js &middot; Low-Latency UDP OSC Packet Dispatch to Port 39539</div>
+          <div class="odata-code-block"><pre style="margin:0; font-family:var(--font-mono); font-size:12px; line-height:1.55; color:#e0d8c8;"><span style="color:#8a8276;">// VMC (Virtual Motion Capture) protocol transmission via WebSocket bridge</span>
+<span style="color:#7fa4c9;">function</span> <span style="color:#f7efe1;">sendVmcBlendshape</span>(blendShapeName, weight, durationMs = 1200) {
+    <span style="color:#7fa4c9;">const</span> payload = {
+        osc_address: <span style="color:#a8c97f;">"/VMC/Ext/Blend/Val"</span>,
+        args: [
+            { type: <span style="color:#a8c97f;">"string"</span>, value: blendShapeName }, <span style="color:#8a8276;">// "happy", "angry", "blink", "a"</span>
+            { type: <span style="color:#a8c97f;">"float"</span>,  value: parseFloat(weight) }    <span style="color:#8a8276;">// 0.0 - 1.0</span>
+        ]
+    };
+    socket.send(JSON.stringify(payload));
+
+    <span style="color:#8a8276;">// Viseme decay timeout ensures natural facial relaxation without abrupt snapping</span>
+    <span style="color:#7fa4c9;">if</span> (durationMs &gt; 0) {
+        setTimeout(() =&gt; resetBlendshape(blendShapeName), durationMs);
+    }
+}</pre></div>
+        </div>
+      </div>
+
+      <!-- CASE STUDY 02: RETAIL FORECASTING -->
+      <div id="casePaneForecasting" class="case-pane">
+        <div class="case-note-banner">
+          <strong style="color: var(--terracotta);">IS388 Coursework Grounding:</strong> Executed across 12.6M+ retail transaction records (<code>salesFinal2016.csv</code>, 1.6 GB) via chunkwise ingestion (<code>chunksize=100k</code>) following all 6 CRISP-DM phases.
+        </div>
+
+        <div class="benchmark-switcher" style="margin-top: 0;">
+          <div class="benchmark-nav">
+            <button type="button" class="benchmark-tab is-active" id="tabProphet" onclick="switchBenchmark('prophet')">
+              Facebook Prophet <span class="tag-winner">R&sup2; 0.835</span>
+            </button>
+            <button type="button" class="benchmark-tab" id="tabSarimax" onclick="switchBenchmark('sarimax')">
+              SARIMAX (1,0,1)(0,1,1,7)
+            </button>
+            <button type="button" class="benchmark-tab" id="tabStationary" onclick="switchBenchmark('stationary')">
+              Stationarity &amp; Baseline
+            </button>
+          </div>
+
+          <div class="benchmark-stats">
+            <div class="bench-stat-row">
+              <span class="bench-label">Model Evaluation Metrics</span>
+              <span class="bench-val" id="benchMetrics" style="color: var(--terracotta);">R&sup2;: 0.8349 &middot; MAE: 90,516.00</span>
+            </div>
+            <div class="bench-stat-row">
+              <span class="bench-label">Mean Squared Error (MSE)</span>
+              <span class="bench-val" id="benchMse">29,565,117,580 (2.96e10)</span>
+            </div>
+            <div class="bench-stat-row">
+              <span class="bench-label">Time-Series Modeling Technique</span>
+              <span class="bench-val" id="benchSeason">Additive Seasonality with Weekly &amp; Holiday Decompositions</span>
+            </div>
+            <div class="bench-verdict" id="benchVerdict">
+              <strong>Coursework Finding:</strong> Prophet captured daily and weekly retail cycles with high fidelity, achieving R&sup2; = 0.835 and MAE 90,516 by tracking calendar patterns across 12.6M+ transactions.
+            </div>
+          </div>
+
+          <div class="r2-bars-compare">
+            <div class="r2-bar-row">
+              <span class="r2-bar-name">Facebook Prophet</span>
+              <div class="r2-bar-track"><div class="r2-bar-fill is-winner" style="width: 83.49%;"></div></div>
+              <span class="r2-bar-val">0.8349</span>
+            </div>
+            <div class="r2-bar-row">
+              <span class="r2-bar-name">SARIMAX (1,0,1)(0,1,1,7)</span>
+              <div class="r2-bar-track"><div class="r2-bar-fill" style="width: 48.46%;"></div></div>
+              <span class="r2-bar-val">0.4846</span>
+            </div>
+            <div class="r2-bar-row">
+              <span class="r2-bar-name">Untuned Baseline</span>
+              <div class="r2-bar-track"><div class="r2-bar-fill is-muted" style="width: 25.21%;"></div></div>
+              <span class="r2-bar-val">0.2521</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASE STUDY 03: SAP S/4HANA ANALYTICS -->
+      <div id="casePaneSap" class="case-pane">
+        <div class="case-note-banner">
+          <strong style="color: var(--terracotta);">Academic Environment Note:</strong> Developed for IS539 ERP Programming on TU Munich UCC's SAP S/4HANA training server (<code>s40lp1.ucc.cit.tum.de:8100</code>). Live lab instance access concluded following course examination; full SAPUI5 application code, OData V2 EDM schema, and XML annotations are preserved in the repository.
+        </div>
+
+        <div class="sap-console-tabs">
+          <button type="button" class="sap-console-tab is-active" id="sapTabSpecs" onclick="switchSapTab('specs')">Architecture &amp; Specs</button>
+          <button type="button" class="sap-console-tab" id="sapTabScreens" onclick="switchSapTab('screens')">Live Fiori UI &amp; Code Evidence</button>
+          <button type="button" class="sap-console-tab" id="sapTabSchema" onclick="switchSapTab('schema')">EDM Schema ($metadata.xml)</button>
+          <button type="button" class="sap-console-tab" id="sapTabAnno" onclick="switchSapTab('anno')">Fiori Annotations (annotation.xml)</button>
+          <button type="button" class="sap-console-tab" id="sapTabMock" onclick="switchSapTab('mock')">Expense Entity Payload</button>
+        </div>
+
+        <div id="sapPaneSpecs" class="sap-pane is-active">
+          <div style="font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 8px;">
+            Monthly Office Supply Expense &mdash; System Architecture
+          </div>
+          <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+            Analytical report designed with SAP Fiori Tools on VS Code. Serves expense ledgers via custom ABAP Data Provider Classes (<code style="font-family: var(--font-mono); color: var(--terracotta);">DPC_EXT</code>) executing dynamic OpenSQL joins across material and financial tables.
+          </p>
+          <div class="sap-specs-grid">
+            <div class="sap-spec-item">
+              <span class="sap-spec-label">Application Module</span>
+              <span class="sap-spec-value">zumn.is539.group2.officesupplyreport</span>
+            </div>
+            <div class="sap-spec-item">
+              <span class="sap-spec-label">UI5 Template &amp; Theme</span>
+              <span class="sap-spec-value">Analytical List Page V2 (UI5 1.108 / sap_horizon)</span>
+            </div>
+            <div class="sap-spec-item">
+              <span class="sap-spec-label">Backend OData Service</span>
+              <span class="sap-spec-value">/sap/opu/odata/sap/Z_EXP_FIORI_SRV/</span>
+            </div>
+            <div class="sap-spec-item">
+              <span class="sap-spec-label">Main Query Entity</span>
+              <span class="sap-spec-value">ExpenseSet (Key: TransId + ItemCode)</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="sapPaneScreens" class="sap-pane">
+          <div style="font-size: 15px; font-weight: 600; color: var(--white); margin-bottom: 8px;">
+            Verified Exam Lab Outputs &mdash; IS539 ERP Programming (TU Munich Server)
+          </div>
+          <p style="font-size: 13.5px; color: var(--text-secondary); margin-bottom: 16px;">
+            Live screenshots from Nikki's final exam implementation. Click any frame to inspect high-resolution details:
+          </p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px;">
+            <div style="cursor: pointer; background: rgba(26,23,20,0.06); border: 1px solid var(--hairline); border-radius: 6px; padding: 12px;" onclick="openImageModal('assets/sap-fiori-dashboard.png', 'SAP Fiori Main Dashboard', 'Executive Expenditure Dashboard showing filtered monthly office supplies with live Smart Table and column adapters')">
+              <img src="assets/sap-fiori-dashboard.png" alt="SAP Fiori Dashboard" style="width: 100%; height: auto; border-radius: 4px; display: block;">
+              <span style="font-family: var(--font-mono); font-size: 11px; color: var(--terracotta); display: block; margin-top: 8px; font-weight: 500;">01 / Executive Expenditure Dashboard &rarr;</span>
+            </div>
+            <div style="cursor: pointer; background: rgba(26,23,20,0.06); border: 1px solid var(--hairline); border-radius: 6px; padding: 12px;" onclick="openImageModal('assets/sap-fiori-detail.png', 'SAP Fiori Object Page', 'Detailed transaction view showing Total Expenditure KPI (800,000 IDR) and cost center allocation')">
+              <img src="assets/sap-fiori-detail.png" alt="SAP Fiori Object Page" style="width: 100%; height: auto; border-radius: 4px; display: block;">
+              <span style="font-family: var(--font-mono); font-size: 11px; color: var(--terracotta); display: block; margin-top: 8px; font-weight: 500;">02 / Object Page &amp; KPI Breakdown &rarr;</span>
+            </div>
+            <div style="cursor: pointer; background: rgba(26,23,20,0.06); border: 1px solid var(--hairline); border-radius: 6px; padding: 12px;" onclick="openImageModal('assets/sap-abap-code.png', 'ABAP Data Provider Class (DPC_EXT)', 'Custom ABAP code in SAP GUI executing dynamic OpenSQL WHERE clauses with table joins')">
+              <img src="assets/sap-abap-code.png" alt="ABAP DPC_EXT Code" style="width: 100%; height: auto; border-radius: 4px; display: block;">
+              <span style="font-family: var(--font-mono); font-size: 11px; color: var(--terracotta); display: block; margin-top: 8px; font-weight: 500;">03 / ABAP Data Provider Class &rarr;</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="sapPaneSchema" class="sap-pane">
+          <span class="odata-endpoint-badge">Schema: Z_EXP_FIORI_SRV.Expense (OData V2 Metadata)</span>
+          <pre class="odata-code-block"><code>&lt;EntityType Name="Expense" sap:content-version="1"&gt;
+  &lt;Key&gt;
+    &lt;PropertyRef Name="TransId"/&gt;
+    &lt;PropertyRef Name="ItemCode"/&gt;
+  &lt;/Key&gt;
+  &lt;Property Name="TransId" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Transaction ID"/&gt;
+  &lt;Property Name="TransDate" Type="Edm.DateTime" Nullable="false" Precision="7" sap:label="Transaction Date"/&gt;
+  &lt;Property Name="DeptCode" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Department Code"/&gt;
+  &lt;Property Name="DeptName" Type="Edm.String" Nullable="false" MaxLength="50" sap:label="Department Name"/&gt;
+  &lt;Property Name="CostCenter" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Cost Center"/&gt;
+  &lt;Property Name="ItemCode" Type="Edm.String" Nullable="false" MaxLength="5" sap:label="Item Code"/&gt;
+  &lt;Property Name="ItemName" Type="Edm.String" Nullable="false" MaxLength="50" sap:label="Item Name"/&gt;
+  &lt;Property Name="Category" Type="Edm.String" Nullable="false" MaxLength="20" sap:label="Expense Category"/&gt;
+  &lt;Property Name="Quantity" Type="Edm.Int32" Nullable="false" sap:label="Quantity"/&gt;
+  &lt;Property Name="Unit" Type="Edm.String" Nullable="false" MaxLength="3" sap:label="Unit"/&gt;
+  &lt;Property Name="TotalExpenditure" Type="Edm.Decimal" Precision="15" Scale="2" sap:label="Total Expenditure"/&gt;
+&lt;/EntityType&gt;</code></pre>
+        </div>
+
+        <div id="sapPaneAnno" class="sap-pane">
+          <span class="odata-endpoint-badge">Vocabulary: com.sap.vocabularies.UI.v1 (Analytical List Page Annotations)</span>
+          <pre class="odata-code-block"><code>&lt;!-- Interactive Chart: Spending by Department --&gt;
+&lt;Annotation Term="UI.Chart" Qualifier="SpendingByDepartment"&gt;
+  &lt;Record Type="UI.ChartDefinitionType"&gt;
+    &lt;PropertyValue Property="Title" String="{@i18n&gt;spendingByDepartment}"/&gt;
+    &lt;PropertyValue Property="ChartType" EnumMember="UI.ChartType/Donut"/&gt;
+    &lt;PropertyValue Property="Measures"&gt;
+      &lt;Collection&gt;&lt;PropertyPath&gt;TotalExpenditure&lt;/PropertyPath&gt;&lt;/Collection&gt;
+    &lt;/PropertyValue&gt;
+    &lt;PropertyValue Property="Dimensions"&gt;
+      &lt;Collection&gt;&lt;PropertyPath&gt;DeptName&lt;/PropertyPath&gt;&lt;/Collection&gt;
+    &lt;/PropertyValue&gt;
+  &lt;/Record&gt;
+&lt;/Annotation&gt;
+
+&lt;!-- Filter Bar &amp; LineItem Table Definitions --&gt;
+&lt;Annotation Term="UI.SelectionFields"&gt;
+  &lt;Collection&gt;
+    &lt;PropertyPath&gt;TransDate&lt;/PropertyPath&gt;
+    &lt;PropertyPath&gt;DeptName&lt;/PropertyPath&gt;
+    &lt;PropertyPath&gt;Category&lt;/PropertyPath&gt;
+  &lt;/Collection&gt;
+&lt;/Annotation&gt;</code></pre>
+        </div>
+
+        <div id="sapPaneMock" class="sap-pane">
+          <span class="odata-endpoint-badge">Payload: Z_EXP_FIORI_SRV/ExpenseSet (Normalized Currency IDR)</span>
+          <pre class="odata-code-block"><code>{
+  "d": {
+    "results": [
+      {
+        "__metadata": { "type": "Z_EXP_FIORI_SRV.Expense" },
+        "TransId": "TRX-001092",
+        "ItemCode": "OFF-04",
+        "TransDate": "2026-05-24T00:00:00",
+        "DeptCode": "FIN",
+        "DeptName": "Finance &amp; Accounting",
+        "CostCenter": "CC-FIN-UMN",
+        "ItemName": "A4 Paper Ream (80 GSM)",
+        "Category": "Stationery",
+        "Quantity": 50,
+        "Unit": "BOX",
+        "TotalExpenditure": 2750000.00
+      },
+      {
+        "__metadata": { "type": "Z_EXP_FIORI_SRV.Expense" },
+        "TransId": "TRX-001093",
+        "ItemCode": "IT-12",
+        "TransDate": "2026-05-25T00:00:00",
+        "DeptCode": "INF",
+        "DeptName": "IT Infrastructure",
+        "CostCenter": "CC-IT-LABS",
+        "ItemName": "Cat6 Ethernet Patch Cable 3M",
+        "Category": "Peripherals",
+        "Quantity": 25,
+        "Unit": "PCS",
+        "TotalExpenditure": 1875000.00
+      }
+    ]
+  }
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Reusable Cinema Media Lightbox Modal -->
 <div id="mediaModal" class="media-modal" aria-hidden="true" role="dialog" aria-modal="true">
   <div class="media-modal__backdrop" onclick="closeMediaModal()"></div>
@@ -922,28 +1056,23 @@ cursor.execute(<span style="color:#a8c97f;">"""
         <h4 id="modalTitle" class="media-modal__title">Media Preview</h4>
         <span id="modalMeta" class="media-modal__meta">Preview</span>
       </div>
-      <button class="media-modal__close-btn" onclick="closeMediaModal()" aria-label="Close Preview">&times; Close (Esc)</button>
+      <button type="button" class="media-modal__close-btn" onclick="closeMediaModal()" aria-label="Close Preview">&times; Close (Esc)</button>
     </div>
-    <div id="modalMediaBody" class="media-modal__body">
-      <!-- Injected dynamically: video or image -->
-    </div>
+    <div id="modalMediaBody" class="media-modal__body"></div>
     <div class="media-modal__footer">
       <p id="modalDesc" style="margin: 0;"></p>
     </div>
   </div>
 </div>
 
-<!-- --------------------------------------------------
-     Lenis Smooth Scrolling + Hardware Scroll Controller
-     -------------------------------------------------- -->
+<!-- Scripts: Lenis Smooth Scrolling + Fluid Shader Engine + Main Controller -->
 <script src="js/lenis.min.js"></script>
+<script src="js/fluid-engine.js"></script>
 <script src="js/main.js" defer></script>
-
 
 <!-- Floating AI Assistant Pop-up Widget -->
 <div id="aiChatWidget" class="ai-chat-widget">
-  <!-- Trigger Button -->
-  <button id="aiChatTrigger" class="ai-chat-trigger" onclick="toggleAiChat()" aria-label="Open AI Assistant" title="Chat with AI Assistant">
+  <button type="button" id="aiChatTrigger" class="ai-chat-trigger" onclick="toggleAiChat()" aria-label="Open AI Assistant" title="Chat with AI Assistant">
     <span class="ai-trigger-icon">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
         <path d="M12 2L14.4 7.6L20 10L14.4 12.4L12 18L9.6 12.4L4 10L9.6 7.6L12 2Z"/>
@@ -953,7 +1082,6 @@ cursor.execute(<span style="color:#a8c97f;">"""
     <span class="ai-trigger-status-dot" aria-hidden="true"></span>
   </button>
 
-  <!-- Pop-up Window -->
   <div id="aiChatWindow" class="ai-chat-window" aria-hidden="true" role="dialog" aria-label="AI Assistant Dialog">
     <div class="ai-chat-header">
       <div class="ai-chat-header-info">
@@ -966,10 +1094,9 @@ cursor.execute(<span style="color:#a8c97f;">"""
           <div class="ai-chat-subtitle">Powered by Gemini &middot; <span id="aiQueryCounter" class="ai-query-counter">8 queries remaining</span></div>
         </div>
       </div>
-      <button class="ai-chat-close-btn" onclick="toggleAiChat()" aria-label="Close Assistant">&times;</button>
+      <button type="button" class="ai-chat-close-btn" onclick="toggleAiChat()" aria-label="Close Assistant">&times;</button>
     </div>
 
-    <!-- Messages Container -->
     <div id="aiChatMessages" class="ai-chat-messages" data-lenis-prevent>
       <div class="ai-message ai-message--bot">
         <div class="ai-bubble">
@@ -977,7 +1104,6 @@ cursor.execute(<span style="color:#a8c97f;">"""
         </div>
       </div>
 
-      <!-- Quick Suggestion Chips -->
       <div id="aiPromptChips" class="ai-prompt-chips">
         <button type="button" class="ai-chip" onclick="askAiChip('Summarize Nikki\'s experience with SAP S/4HANA and ABAP')">SAP &amp; ABAP</button>
         <button type="button" class="ai-chip" onclick="askAiChip('How was Visage Link built, and what AI models does it use?')">Visage Link AI</button>
@@ -986,14 +1112,13 @@ cursor.execute(<span style="color:#a8c97f;">"""
       </div>
     </div>
 
-    <!-- Input Form -->
     <form id="aiChatForm" class="ai-chat-form" onsubmit="handleAiChatSubmit(event)">
-      <input 
-        type="text" 
-        id="aiChatInput" 
-        class="ai-chat-input" 
-        placeholder="Ask a question about Nikki..." 
-        autocomplete="off" 
+      <input
+        type="text"
+        id="aiChatInput"
+        class="ai-chat-input"
+        placeholder="Ask a question about Nikki..."
+        autocomplete="off"
         maxlength="200"
       />
       <button type="submit" id="aiChatSubmitBtn" class="ai-chat-send-btn" aria-label="Send Message">

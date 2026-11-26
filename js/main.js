@@ -1,29 +1,58 @@
 /* ==================================================
+   Motion State (Always Enabled) & Menu Overlay
+   ================================================== */
+const PREFERS_REDUCED_MOTION = false;
+const motionEnabled = true;
+
+window.toggleMenuOverlay = function(forceClose) {
+  const overlay = document.getElementById('menuOverlay');
+  const btns = [
+    document.getElementById('floatingMenuBtn'),
+    document.getElementById('mobileNavToggle'),
+  ];
+  if (!overlay) return;
+  const shouldOpen = forceClose === true ? false : !overlay.classList.contains('is-open');
+  overlay.classList.toggle('is-open', shouldOpen);
+  overlay.setAttribute('aria-hidden', String(!shouldOpen));
+  btns.forEach(b => b && b.setAttribute('aria-expanded', String(shouldOpen)));
+};
+
+window.navigateToAnchor = function(selector) {
+  toggleMenuOverlay(true);
+  const target = document.querySelector(selector);
+  if (!target) return;
+  if (window.lenis && motionEnabled) {
+    window.lenis.scrollTo(target, { offset: 0, duration: 1.15 });
+  } else {
+    target.scrollIntoView({ behavior: motionEnabled ? 'smooth' : 'auto' });
+  }
+};
+
+/* ==================================================
    Lenis Smooth Scrolling Architecture
    ================================================== */
 (function initLenis() {
-  if (typeof Lenis === 'undefined') return;
+  if (typeof Lenis !== 'undefined' && !PREFERS_REDUCED_MOTION) {
+    const lenis = new Lenis({
+      duration: 1.15,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.6,
+      infinite: false,
+    });
 
-  const lenis = new Lenis({
-    duration: 1.15,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    orientation: 'vertical',
-    gestureOrientation: 'vertical',
-    smoothWheel: true,
-    wheelMultiplier: 1.0,
-    touchMultiplier: 1.6,
-    infinite: false,
-  });
+    window.lenis = lenis;
 
-  window.lenis = lenis;
-
-  function raf(time) {
-    lenis.raf(time);
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
     requestAnimationFrame(raf);
   }
-  requestAnimationFrame(raf);
 
-  // Smooth scroll all in-page anchor links with Lenis
   document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
       anchor.addEventListener('click', function(e) {
@@ -32,44 +61,190 @@
         const target = document.querySelector(href);
         if (target) {
           e.preventDefault();
-          lenis.scrollTo(target, { offset: -30, duration: 1.2 });
+          toggleMenuOverlay(true);
+          if (window.lenis && motionEnabled) {
+            window.lenis.scrollTo(target, { offset: 0, duration: 1.15 });
+          } else {
+            target.scrollIntoView({ behavior: motionEnabled ? 'smooth' : 'auto' });
+          }
         }
       });
     });
   });
 })();
 
-(function() {
+/* ==================================================
+   Header Morph, Reading Progress & Active Section Scroll-Spy
+   ================================================== */
+(function initHeaderScrollSpy() {
+  const headerBar = document.getElementById('headerBar');
+  const floatingChrome = document.getElementById('floatingChrome');
+  const progressBar = document.getElementById('headerProgress');
+  const navLinks = document.querySelectorAll('.nav-link[data-section]');
+  const sections = ['intro', 'work', 'background', 'contact']
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+
+  let ticking = false;
+  function updateHeaderScroll() {
+    const scrollY = window.scrollY || window.pageYOffset;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const ratio = docHeight > 0 ? Math.min(1, Math.max(0, scrollY / docHeight)) : 0;
+
+    if (progressBar) {
+      progressBar.style.transform = 'scaleX(' + ratio.toFixed(4) + ')';
+    }
+
+    const morphed = scrollY > 140;
+    if (headerBar) {
+      headerBar.classList.toggle('is-morphed', morphed);
+    }
+    if (floatingChrome) {
+      floatingChrome.classList.toggle('is-visible', morphed);
+    }
+
+    const probeY = window.innerHeight * 0.4;
+    let activeId = null;
+    for (let i = 0; i < sections.length; i++) {
+      const rect = sections[i].getBoundingClientRect();
+      if (rect.top <= probeY && rect.bottom >= 80) {
+        activeId = sections[i].id;
+      }
+    }
+    if (docHeight > 0 && scrollY >= docHeight - 40 && sections.length) {
+      activeId = sections[sections.length - 1].id;
+    }
+
+    navLinks.forEach(link => {
+      link.classList.toggle('is-active', activeId !== null && link.dataset.section === activeId);
+    });
+
+    ticking = false;
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      window.requestAnimationFrame(updateHeaderScroll);
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  updateHeaderScroll();
+})();
+
+/* ==================================================
+   Hero Runway Convergence, WebGL Fluid Ink & Synapse Arcs
+   ================================================== */
+(function initHeroSystem() {
   const runway = document.querySelector('.hero-runway');
+  const stage = document.getElementById('heroStage');
+  const bgPlate = document.getElementById('heroBgPlate');
   const adam = document.getElementById('adamLayer');
   const cyborg = document.getElementById('cyborgLayer');
   const spark = document.getElementById('heroSpark');
+  const sparkRing = document.getElementById('heroSparkRing');
+  const spotlight = document.getElementById('heroSpotlight');
   const plaque = document.getElementById('heroPlaque');
+  const fluidCanvas = document.getElementById('heroFluidCanvas');
+  const synapseCanvas = document.getElementById('heroSynapseCanvas');
 
   if (!runway || !adam || !cyborg) return;
 
-  let ticking = false;
+  let heroFluid = null;
+  if (fluidCanvas && window.PortfolioFluid) {
+    heroFluid = window.PortfolioFluid.initFluidInkCanvas(fluidCanvas, {
+      triggerTarget: stage,
+      alphaScale: 0.46,
+      dyeDissipation: 0.968,
+      velDissipation: 0.978,
+      curl: 58,
+      splatRadius: 0.00026,
+      seedAmbient: false,
+      primaryColor: [0.08, 0.068, 0.056],
+      secondaryColor: [0.58, 0.28, 0.17],
+    });
+    window.PortfolioFluid.setMotionEnabled(motionEnabled);
+  }
 
-  function updateMotion() {
-    const rect = runway.getBoundingClientRect();
-    const maxScroll = runway.offsetHeight - window.innerHeight;
-    const scrolled = -rect.top;
-    const progress = Math.min(1, Math.max(0, scrolled / maxScroll));
+  const synCtx = synapseCanvas ? synapseCanvas.getContext('2d') : null;
+  function resizeSynapse() {
+    if (!synapseCanvas) return;
+    synapseCanvas.width = synapseCanvas.offsetWidth || window.innerWidth;
+    synapseCanvas.height = synapseCanvas.offsetHeight || window.innerHeight;
+  }
+  resizeSynapse();
+  window.addEventListener('resize', resizeSynapse, { passive: true });
 
-    // Slow, stately physical convergence: smoothstep S-curve starts ultra-gentle,
-    // glides gracefully in mid-flight, and lands softly at progress = 0.75
-    const p = Math.min(1, Math.max(0, progress / 0.75));
+  let scrollTicking = false;
+  let pointerActive = false;
+  let targetNx = 0;
+  let targetNy = 0;
+  let curNx = 0;
+  let curNy = 0;
+  let depthRafId = null;
+  let hasContactBurst = false;
+
+  function drawSynapseArcs(progress) {
+    if (!synCtx || !synapseCanvas) return;
+    synCtx.clearRect(0, 0, synapseCanvas.width, synapseCanvas.height);
+    if (!motionEnabled || progress < 0.65 || progress > 0.92) return;
+
+    const strength = Math.sin(((progress - 0.65) / 0.27) * Math.PI);
+    const cx = synapseCanvas.width * 0.5;
+    const cy = synapseCanvas.height * 0.45;
+    const spread = 18 + (1 - Math.min(1, Math.abs(progress - 0.75) * 8)) * 34;
+
+    synCtx.save();
+    for (let a = 0; a < 5; a++) {
+      const angleOffset = (a - 2) * 0.42 + Math.sin(performance.now() * 0.005 + a) * 0.25;
+      const sx = cx - spread * Math.cos(angleOffset * 0.5);
+      const ex = cx + spread * Math.cos(angleOffset * 0.5);
+      const sy = cy + Math.sin(angleOffset) * 14;
+      const ey = cy - Math.sin(angleOffset) * 14;
+
+      synCtx.beginPath();
+      synCtx.moveTo(sx, sy);
+      const steps = 6;
+      for (let s = 1; s < steps; s++) {
+        const t = s / steps;
+        const px = sx + (ex - sx) * t;
+        const py = sy + (ey - sy) * t + (Math.random() - 0.5) * 11 * strength;
+        synCtx.lineTo(px, py);
+      }
+      synCtx.lineTo(ex, ey);
+      synCtx.strokeStyle = a % 2 === 0
+        ? `rgba(247, 239, 225, ${(0.55 * strength).toFixed(2)})`
+        : `rgba(140, 72, 48, ${(0.72 * strength).toFixed(2)})`;
+      synCtx.lineWidth = a === 2 ? 1.5 : 0.9;
+      synCtx.stroke();
+    }
+    synCtx.restore();
+  }
+
+  function applyTransforms(progress) {
+    const p = !motionEnabled ? 1 : Math.min(1, Math.max(0, progress / 0.75));
     const easeProgress = p * p * (3 - 2 * p);
-
-    // Initial separation: 76px shift each across the expansive 550vh runway
     const shift = (1 - easeProgress) * 76;
 
-    adam.style.transform = 'translate3d(' + (-shift).toFixed(2) + 'px, 0, 0)';
-    cyborg.style.transform = 'translate3d(' + shift.toFixed(2) + 'px, 0, 0)';
+    const bgParallaxX = motionEnabled ? -curNx * 6 : 0;
+    const bgParallaxY = motionEnabled ? -curNy * 4 : 0;
+    const figParallaxX = motionEnabled ? curNx * 3 : 0;
+    const figParallaxY = motionEnabled ? curNy * 2 : 0;
 
-    // Spark between fingertips (peaks right as fingertips make contact at progress 0.75)
+    if (bgPlate) {
+      bgPlate.style.transform =
+        'scale(1.03) translate3d(' + bgParallaxX.toFixed(2) + 'px, ' + bgParallaxY.toFixed(2) + 'px, 0)';
+    }
+
+    adam.style.transform =
+      'translate3d(' + (-shift + figParallaxX).toFixed(2) + 'px, ' + figParallaxY.toFixed(2) + 'px, 0) scale(1.015)';
+    cyborg.style.transform =
+      'translate3d(' + (shift + figParallaxX).toFixed(2) + 'px, ' + figParallaxY.toFixed(2) + 'px, 0) scale(1.015)';
+
     if (spark) {
-      if (progress > 0.58 && progress < 0.92) {
+      if (motionEnabled && progress > 0.58 && progress < 0.92) {
         const sparkP = (progress - 0.58) / 0.34;
         const scale = Math.sin(sparkP * Math.PI) * 1.35;
         spark.style.transform = 'translate(-50%, -50%) scale(' + scale.toFixed(3) + ')';
@@ -80,10 +255,34 @@
       }
     }
 
-    // High-Contrast Center Title reveal (gradually surfaces over 0.38 - 0.68, then holds solid)
+    if (sparkRing) {
+      if (motionEnabled && progress > 0.70 && progress < 0.94) {
+        const ringP = (progress - 0.70) / 0.24;
+        const ringScale = 0.35 + ringP * 2.1;
+        const ringAlpha = Math.sin(ringP * Math.PI) * 0.85;
+        sparkRing.style.transform = 'translate(-50%, -50%) scale(' + ringScale.toFixed(3) + ')';
+        sparkRing.style.opacity = ringAlpha.toFixed(2);
+      } else {
+        sparkRing.style.transform = 'translate(-50%, -50%) scale(0.35)';
+        sparkRing.style.opacity = '0';
+      }
+    }
+
+    // Trigger organic fluid spark burst once when fingertips touch at 0.75
+    if (motionEnabled && heroFluid) {
+      if (progress >= 0.72 && progress <= 0.82 && !hasContactBurst) {
+        hasContactBurst = true;
+        heroFluid.burstAt(0.5, 0.55, 0.95);
+      } else if (progress < 0.60) {
+        hasContactBurst = false;
+      }
+    }
+
+    drawSynapseArcs(progress);
+
     if (plaque) {
-      if (progress > 0.38) {
-        const textP = Math.min(1, (progress - 0.38) / 0.30);
+      if (!motionEnabled || progress > 0.38) {
+        const textP = !motionEnabled ? 1 : Math.min(1, (progress - 0.38) / 0.30);
         const translateY = (1 - textP) * 20;
         plaque.style.opacity = textP.toFixed(2);
         plaque.style.transform = 'translate(-50%, calc(-50% + ' + translateY.toFixed(1) + 'px))';
@@ -94,15 +293,75 @@
         plaque.style.pointerEvents = 'none';
       }
     }
-
-    ticking = false;
   }
 
+  function getProgress() {
+    const rect = runway.getBoundingClientRect();
+    const maxScroll = Math.max(1, runway.offsetHeight - window.innerHeight);
+    return Math.min(1, Math.max(0, -rect.top / maxScroll));
+  }
+
+  function updateMotion() {
+    applyTransforms(getProgress());
+    scrollTicking = false;
+  }
+  window.__refreshHeroMotion = updateMotion;
+
   function onScroll() {
-    if (!ticking) {
+    if (!scrollTicking) {
       window.requestAnimationFrame(updateMotion);
-      ticking = true;
+      scrollTicking = true;
     }
+  }
+
+  function stepDepthLerp() {
+    const dx = targetNx - curNx;
+    const dy = targetNy - curNy;
+    curNx += dx * 0.1;
+    curNy += dy * 0.1;
+
+    applyTransforms(getProgress());
+
+    if (pointerActive || Math.abs(dx) > 0.002 || Math.abs(dy) > 0.002) {
+      depthRafId = window.requestAnimationFrame(stepDepthLerp);
+    } else {
+      curNx = targetNx;
+      curNy = targetNy;
+      depthRafId = null;
+    }
+  }
+
+  if (stage) {
+    stage.addEventListener('mousemove', function(e) {
+      if (!motionEnabled) return;
+      const rect = stage.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const rx = (e.clientX - rect.left) / rect.width;
+      const ry = (e.clientY - rect.top) / rect.height;
+      targetNx = (rx - 0.5) * 2;
+      targetNy = (ry - 0.5) * 2;
+      pointerActive = true;
+
+      if (spotlight) {
+        spotlight.style.setProperty('--mx', (rx * 100).toFixed(2) + '%');
+        spotlight.style.setProperty('--my', (ry * 100).toFixed(2) + '%');
+        spotlight.classList.add('is-active');
+      }
+
+      if (!depthRafId) {
+        depthRafId = window.requestAnimationFrame(stepDepthLerp);
+      }
+    }, { passive: true });
+
+    stage.addEventListener('mouseleave', function() {
+      pointerActive = false;
+      targetNx = 0;
+      targetNy = 0;
+      if (spotlight) spotlight.classList.remove('is-active');
+      if (!depthRafId) {
+        depthRafId = window.requestAnimationFrame(stepDepthLerp);
+      }
+    }, { passive: true });
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
@@ -110,27 +369,240 @@
   updateMotion();
 })();
 
+/* ==================================================
+   Pinned Full-Viewport Exhibition Stage (#work)
+   ================================================== */
+(function initWorkExhibition() {
+  const runway = document.getElementById('work');
+  const counterEl = document.getElementById('workCounter');
+
+  const panels = [
+    document.getElementById('workPanel0'),
+    document.getElementById('workPanel1'),
+    document.getElementById('workPanel2'),
+  ];
+  const slides = [
+    document.getElementById('exhibitSlide0'),
+    document.getElementById('exhibitSlide1'),
+    document.getElementById('exhibitSlide2'),
+  ];
+  const rails = [
+    document.getElementById('workRail0'),
+    document.getElementById('workRail1'),
+    document.getElementById('workRail2'),
+  ];
+  const railFills = [
+    document.getElementById('workRailFill0'),
+    document.getElementById('workRailFill1'),
+    document.getElementById('workRailFill2'),
+  ];
+
+  if (!runway) return;
+
+  let activeIndex = 0;
+
+  function applySlide(index) {
+    activeIndex = Math.max(0, Math.min(2, index));
+    if (counterEl) {
+      counterEl.textContent = '0' + (activeIndex + 1) + ' / 03';
+    }
+
+    panels.forEach((p, i) => p && p.classList.toggle('is-active', i === activeIndex));
+    slides.forEach((s, i) => s && s.classList.toggle('is-active', i === activeIndex));
+    rails.forEach((r, i) => {
+      if (!r) return;
+      r.classList.toggle('is-active', i === activeIndex);
+      r.setAttribute('aria-selected', String(i === activeIndex));
+    });
+
+    // Pause Visage video when navigating away from Slide 0
+    const vid = document.getElementById('visageVideo');
+    if (vid && activeIndex !== 0 && !vid.paused) {
+      vid.pause();
+    }
+  }
+
+  let ticking = false;
+  function updateWorkStage() {
+    if (window.innerWidth <= 900) {
+      railFills.forEach((fill, i) => {
+        if (fill) fill.style.transform = 'scaleX(' + (i === activeIndex ? '1' : '0') + ')';
+      });
+      ticking = false;
+      return;
+    }
+
+    const rect = runway.getBoundingClientRect();
+    const maxScroll = Math.max(1, runway.offsetHeight - window.innerHeight);
+    const progress = Math.min(1, Math.max(0, -rect.top / maxScroll));
+
+    const idx = progress < 0.333 ? 0 : progress < 0.667 ? 1 : 2;
+    if (idx !== activeIndex) {
+      applySlide(idx);
+    }
+
+    // Update 3-segment fill progress proportionally across [0..0.333], [0.333..0.667], [0.667..1.0]
+    for (let i = 0; i < 3; i++) {
+      const start = i / 3;
+      const local = Math.min(1, Math.max(0, (progress - start) * 3));
+      if (railFills[i]) {
+        railFills[i].style.transform = 'scaleX(' + local.toFixed(3) + ')';
+      }
+    }
+
+    ticking = false;
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      window.requestAnimationFrame(updateWorkStage);
+      ticking = true;
+    }
+  }
+
+  window.jumpToWorkSlide = function(index) {
+    toggleMenuOverlay(true);
+    const targetIdx = Math.max(0, Math.min(2, index));
+    applySlide(targetIdx);
+
+    if (window.innerWidth <= 900) {
+      railFills.forEach((fill, i) => {
+        if (fill) fill.style.transform = 'scaleX(' + (i === targetIdx ? '1' : '0') + ')';
+      });
+      if (window.lenis && motionEnabled) {
+        window.lenis.scrollTo(runway, { offset: 0, duration: 1.0 });
+      } else {
+        runway.scrollIntoView({ behavior: motionEnabled ? 'smooth' : 'auto' });
+      }
+      return;
+    }
+
+    const maxScroll = Math.max(1, runway.offsetHeight - window.innerHeight);
+    const targetProgress = targetIdx === 0 ? 0.08 : targetIdx === 1 ? 0.45 : 0.85;
+    const runwayTop = runway.getBoundingClientRect().top + (window.scrollY || window.pageYOffset);
+    const destY = runwayTop + maxScroll * targetProgress;
+
+    if (window.lenis && motionEnabled) {
+      window.lenis.scrollTo(destY, { duration: 1.1 });
+    } else {
+      window.scrollTo({ top: destY, behavior: motionEnabled ? 'smooth' : 'auto' });
+    }
+  };
+
+  applySlide(0);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  updateWorkStage();
+})();
+
+/* ==================================================
+   Technical Case Study Modal Controller
+   ================================================== */
+window.openCaseStudyModal = function(section) {
+  const modal = document.getElementById('caseStudyModal');
+  if (!modal) return;
+  switchCaseSection(section || 'visage');
+  modal.classList.add('is-open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  if (window.lenis) window.lenis.stop();
+};
+
+window.switchCaseSection = function(section) {
+  const map = {
+    visage: { btn: 'caseBtnVisage', pane: 'casePaneVisage' },
+    forecasting: { btn: 'caseBtnForecasting', pane: 'casePaneForecasting' },
+    sap: { btn: 'caseBtnSap', pane: 'casePaneSap' },
+  };
+  Object.keys(map).forEach(key => {
+    const b = document.getElementById(map[key].btn);
+    const p = document.getElementById(map[key].pane);
+    if (b) b.classList.toggle('is-active', key === section);
+    if (p) p.classList.toggle('is-active', key === section);
+  });
+};
+
+window.closeCaseStudyModal = function() {
+  const modal = document.getElementById('caseStudyModal');
+  if (!modal || !modal.classList.contains('is-open')) return;
+  modal.classList.remove('is-open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  if (window.lenis && motionEnabled) window.lenis.start();
+};
+
+/* ==================================================
+   Footer Interactive WebGL Fluid Canvas & Spotlight
+   ================================================== */
+(function initFooterSystem() {
+  const footer = document.getElementById('contact');
+  const spotlight = document.getElementById('footerSpotlight');
+  const fluidCanvas = document.getElementById('footerFluidCanvas');
+  if (!footer) return;
+
+  if (fluidCanvas && window.PortfolioFluid) {
+    window.PortfolioFluid.initFluidInkCanvas(fluidCanvas, {
+      triggerTarget: footer,
+      alphaScale: 0.52,
+      dyeDissipation: 0.97,
+      velDissipation: 0.978,
+      curl: 52,
+      splatRadius: 0.00034,
+      seedAmbient: false,
+      primaryColor: [0.95, 0.89, 0.77],
+      secondaryColor: [0.90, 0.48, 0.34],
+    });
+  }
+
+  if (spotlight) {
+    footer.addEventListener('mousemove', function(e) {
+      if (!motionEnabled) return;
+      const rect = footer.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const rx = ((e.clientX - rect.left) / rect.width) * 100;
+      const ry = ((e.clientY - rect.top) / rect.height) * 100;
+      spotlight.style.setProperty('--fx', rx.toFixed(2) + '%');
+      spotlight.style.setProperty('--fy', ry.toFixed(2) + '%');
+      spotlight.classList.add('is-active');
+    }, { passive: true });
+
+    footer.addEventListener('mouseleave', function() {
+      spotlight.classList.remove('is-active');
+    }, { passive: true });
+  }
+})();
+
 // Play/Pause Visage Link Video Demo
 function playVisageDemo(e) {
   if (e) e.preventDefault();
   const vid = document.getElementById('visageVideo');
+  const btn = document.getElementById('visagePlayBtn');
   if (vid) {
     if (vid.paused) {
       vid.play();
+      if (btn) btn.innerHTML = '<span>Pause Voice Demo</span><span>&#10074;&#10074;</span>';
     } else {
       vid.pause();
+      if (btn) btn.innerHTML = '<span>Play Japanese Demo</span><span>&#9658;</span>';
     }
   }
 }
 
-// Toggle Visage Architecture Drawer
-function toggleVisageDrawer(e) {
-  if (e) e.preventDefault();
-  const drawer = document.getElementById('visageDrawer');
-  if (drawer) {
-    drawer.classList.toggle('is-active');
+document.addEventListener('DOMContentLoaded', function() {
+  const vid = document.getElementById('visageVideo');
+  const btn = document.getElementById('visagePlayBtn');
+  if (vid && btn) {
+    vid.addEventListener('ended', function() {
+      btn.innerHTML = '<span>Play Japanese Demo</span><span>&#9658;</span>';
+    });
+    vid.addEventListener('pause', function() {
+      btn.innerHTML = '<span>Play Japanese Demo</span><span>&#9658;</span>';
+    });
+    vid.addEventListener('play', function() {
+      btn.innerHTML = '<span>Pause Voice Demo</span><span>&#10074;&#10074;</span>';
+    });
   }
-}
+});
 
 function switchVisageTab(tab) {
   const tabs = ['specs', 'stream', 'memory', 'osc'];
@@ -142,16 +614,47 @@ function switchVisageTab(tab) {
   });
 }
 
-// Toggle SAP Architecture Drawer
-function toggleSapDrawer(e) {
-  if (e) e.preventDefault();
-  const drawer = document.getElementById('sapDrawer');
-  if (drawer) {
-    drawer.classList.toggle('is-active');
-  }
-}
+// Scroll-Drawn Chronologia Spine Controller
+(function initTimelineSpine() {
+  const stream = document.getElementById('timelineStream');
+  const spineProgress = document.getElementById('timelineSpineProgress');
+  if (!stream || !spineProgress) return;
 
-// Filter Experience / Timeline Nodes
+  let spineTicking = false;
+
+  function updateTimelineSpine() {
+    const streamRect = stream.getBoundingClientRect();
+    const totalHeight = Math.max(0, stream.offsetHeight - 52);
+    const probeY = window.innerHeight * 0.65;
+    const rawFill = probeY - (streamRect.top + 24);
+    const fillHeight = Math.min(totalHeight, Math.max(0, rawFill));
+
+    spineProgress.style.height = fillHeight.toFixed(1) + 'px';
+
+    const visibleNodes = stream.querySelectorAll('.timeline-node:not(.is-hidden)');
+    visibleNodes.forEach(node => {
+      const markerTop = node.offsetTop + 28;
+      node.classList.toggle('is-spine-lit', fillHeight >= markerTop - 24);
+    });
+
+    spineTicking = false;
+  }
+
+  window.updateTimelineSpine = updateTimelineSpine;
+
+  function onScroll() {
+    if (!spineTicking) {
+      window.requestAnimationFrame(updateTimelineSpine);
+      spineTicking = true;
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  updateTimelineSpine();
+})();
+
+// Filter Experience / Timeline Nodes (with staggered cascade reveal)
 function filterTimeline(category) {
   const buttons = document.querySelectorAll('.exp-filter-btn');
   buttons.forEach(btn => {
@@ -159,93 +662,37 @@ function filterTimeline(category) {
   });
 
   const nodes = document.querySelectorAll('.timeline-node');
+  let visibleIndex = 0;
   nodes.forEach(node => {
+    const card = node.querySelector('.timeline-card');
     if (category === 'all' || node.dataset.category === category) {
       node.classList.remove('is-hidden');
+      if (card) {
+        card.style.transitionDelay = Math.min(visibleIndex * 45, 220) + 'ms';
+      }
+      visibleIndex++;
       const rect = node.getBoundingClientRect();
       if (rect.top < window.innerHeight * 0.85 && rect.bottom > 0) {
+        node.classList.remove('is-revealed');
+        void node.offsetWidth;
         node.classList.add('is-revealed');
       } else if (rect.top >= window.innerHeight * 0.85) {
         node.classList.remove('is-revealed');
       }
+      if (card) {
+        setTimeout(() => { card.style.transitionDelay = ''; }, 500);
+      }
     } else {
       node.classList.add('is-hidden');
       node.classList.remove('is-revealed');
+      if (card) card.style.transitionDelay = '';
     }
   });
 
-  // Update sidebar nav items visibility if present
-  const navItems = document.querySelectorAll('.timeline-nav-item');
-  if (navItems.length) {
-    navItems.forEach(item => {
-      const targetId = item.dataset.target;
-      const targetNode = document.getElementById(targetId);
-      if (targetNode) {
-        if (category === 'all' || targetNode.dataset.category === category) {
-          item.style.display = 'flex';
-        } else {
-          item.style.display = 'none';
-        }
-      }
-    });
+  if (typeof window.updateTimelineSpine === 'function') {
+    window.requestAnimationFrame(window.updateTimelineSpine);
   }
 }
-
-// Backward compatibility alias
-function filterExp(category) {
-  filterTimeline(category);
-}
-
-// Smooth scroll to milestone with pulse feedback
-function scrollToMilestone(id) {
-  const target = document.getElementById('milestone-' + id);
-  if (!target) return;
-
-  const card = target.querySelector('.timeline-card');
-  if (card) {
-    card.classList.remove('is-pulse');
-    void card.offsetWidth; // Force reflow
-    card.classList.add('is-pulse');
-  }
-
-  // Update active state in sidebar
-  document.querySelectorAll('.timeline-nav-item').forEach(item => {
-    item.classList.toggle('is-active', item.dataset.target === 'milestone-' + id);
-  });
-
-  const isMobile = window.innerWidth <= 768;
-  if (window.lenis) {
-    window.lenis.scrollTo(target, { offset: isMobile ? 0 : -80, duration: 1.2 });
-  } else {
-    target.scrollIntoView({ behavior: 'smooth', block: isMobile ? 'start' : 'center' });
-  }
-}
-
-// Scroll-Spy for Timeline Nodes
-(function() {
-  if (typeof IntersectionObserver === 'undefined') return;
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const id = entry.target.id;
-        document.querySelectorAll('.timeline-nav-item').forEach(item => {
-          item.classList.toggle('is-active', item.dataset.target === id);
-        });
-        entry.target.classList.add('is-active');
-      } else {
-        entry.target.classList.remove('is-active');
-      }
-    });
-  }, {
-    rootMargin: '-20% 0px -40% 0px',
-    threshold: 0.1
-  });
-
-  document.querySelectorAll('.timeline-node').forEach(node => {
-    observer.observe(node);
-  });
-})();
 
 // Media Lightbox Modal Controller
 function openVideoModal(videoSrc, title, desc) {
@@ -325,7 +772,7 @@ function openPdfModal(pdfSrc, title, desc) {
 function closeMediaModal() {
   const modal = document.getElementById('mediaModal');
   const body = document.getElementById('modalMediaBody');
-  if (!modal) return;
+  if (!modal || !modal.classList.contains('is-open')) return;
 
   const video = body.querySelector('video');
   if (video) {
@@ -339,10 +786,12 @@ function closeMediaModal() {
   document.body.style.overflow = '';
 }
 
-// Global Keyboard Listener (ESC to close)
+// Global Keyboard Listener (ESC closes top-most overlay/modal)
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     closeMediaModal();
+    closeCaseStudyModal();
+    toggleMenuOverlay(true);
   }
 });
 
@@ -351,7 +800,7 @@ document.addEventListener('keydown', function(e) {
 // --------------------------------------------------
 (function() {
   const canvas = document.getElementById('heroAtmosphere');
-  if (!canvas) return;
+  if (!canvas || PREFERS_REDUCED_MOTION) return;
   const ctx = canvas.getContext('2d');
   let width, height;
   let particles = [];
@@ -377,7 +826,9 @@ document.addEventListener('keydown', function(e) {
   }
 
   function render() {
+    requestAnimationFrame(render);
     ctx.clearRect(0, 0, width, height);
+    if (!motionEnabled) return;
     for (let p of particles) {
       p.x += p.speedX;
       p.y += p.speedY;
@@ -392,7 +843,6 @@ document.addEventListener('keydown', function(e) {
       ctx.fillStyle = 'rgba(235, 219, 186, ' + p.alpha + ')';
       ctx.fill();
     }
-    requestAnimationFrame(render);
   }
 
   window.addEventListener('resize', () => { resize(); initParticles(); });
@@ -466,7 +916,7 @@ function switchBenchmark(model) {
 }
 
 // --------------------------------------------------
-// Feature: Project 03 SAP Drawer Tab Switcher (Specs, Schema, Anno, Mock)
+// Feature: Project 03 SAP Drawer Tab Switcher
 // --------------------------------------------------
 function switchSapTab(tab) {
   const tabs = ['specs', 'screens', 'schema', 'anno', 'mock'];
@@ -514,11 +964,10 @@ function copyEmailToClipboard(e) {
 
 /* --------------------------------------------------
    Dynamic Archival Atmosphere & Parallax Engine
-   (Living Background: Non-Static & Non-Obstructive)
    -------------------------------------------------- */
 (function() {
   const canvas = document.getElementById('dynamicAtmosphereCanvas');
-  if (!canvas) return;
+  if (!canvas || PREFERS_REDUCED_MOTION) return;
   const ctx = canvas.getContext('2d');
   let w = canvas.width = window.innerWidth;
   let h = canvas.height = window.innerHeight;
@@ -528,7 +977,6 @@ function copyEmailToClipboard(e) {
     h = canvas.height = window.innerHeight;
   }, { passive: true });
 
-  // Archival motes & geometric constellation nodes
   const particles = [];
   const COUNT = 45;
   for (let i = 0; i < COUNT; i++) {
@@ -554,7 +1002,6 @@ function copyEmailToClipboard(e) {
     mouse.active = false;
   }, { passive: true });
 
-  // Dynamic scroll parallax for Renaissance architectural watermarks
   const watermarks = document.querySelectorAll('.bg-watermark');
   window.addEventListener('scroll', function() {
     const scrollY = window.pageYOffset || document.documentElement.scrollTop;
@@ -568,10 +1015,11 @@ function copyEmailToClipboard(e) {
 
   let time = 0;
   function animate() {
-    time += 0.016;
+    requestAnimationFrame(animate);
     ctx.clearRect(0, 0, w, h);
+    if (!motionEnabled) return;
 
-    // Warm ambient lantern glow following mouse cursor
+    time += 0.016;
     if (mouse.active) {
       const grad = ctx.createRadialGradient(mouse.x, mouse.y, 10, mouse.x, mouse.y, 350);
       grad.addColorStop(0, 'rgba(247, 241, 230, 0.22)');
@@ -581,7 +1029,6 @@ function copyEmailToClipboard(e) {
       ctx.fillRect(0, 0, w, h);
     }
 
-    // Render floating archival motes & geometric threads
     for (let i = 0; i < particles.length; i++) {
       const p = particles[i];
       p.x += p.vx;
@@ -598,7 +1045,6 @@ function copyEmailToClipboard(e) {
       ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
       ctx.fill();
 
-      // Inter-particle constellation lines
       for (let j = i + 1; j < particles.length; j++) {
         const p2 = particles[j];
         const dx = p.x - p2.x;
@@ -615,7 +1061,6 @@ function copyEmailToClipboard(e) {
         }
       }
 
-      // Dynamic mouse connection lines
       if (mouse.active) {
         const mdx = p.x - mouse.x;
         const mdy = p.y - mouse.y;
@@ -631,18 +1076,12 @@ function copyEmailToClipboard(e) {
         }
       }
     }
-
-    requestAnimationFrame(animate);
   }
   animate();
 })();
 
-
 /* --------------------------------------------------
-   Estheet Kinetic Entrance Controller (Trial)
-   - Preloads key hero imagery
-   - Executes FLIP glide animation from center stage to navbar brand
-   - Safe 900ms ceiling ensures zero wait friction
+   Estheet Kinetic Entrance Controller
    -------------------------------------------------- */
 (function() {
   const curtain = document.getElementById('estheetCurtain');
@@ -651,18 +1090,24 @@ function copyEmailToClipboard(e) {
   const targetBrand = document.querySelector('.brand-name span');
   if (!curtain || !bar || !sourceTitle || !targetBrand) return;
 
-  // Temporarily lock scroll during entrance
+  if (PREFERS_REDUCED_MOTION) {
+    curtain.remove();
+    document.body.style.overflow = '';
+    return;
+  }
+
   document.body.style.overflow = 'hidden';
   if (window.lenis) window.lenis.stop();
 
-  // Initial progress nudge
   requestAnimationFrame(function() {
     bar.style.width = '25%';
   });
 
   const criticalImages = [
     'assets/profile-picture.jpg',
-    'assets/layers/clean_fresco_bg.jpg'
+    'assets/layers/clean_fresco_bg.jpg',
+    'assets/layers/adam_layer.webp',
+    'assets/layers/cyborg_layer.webp'
   ];
 
   let loadedCount = 0;
@@ -675,13 +1120,11 @@ function copyEmailToClipboard(e) {
     bar.style.width = '100%';
 
     (document.fonts ? document.fonts.ready : Promise.resolve()).then(function() {
-      // Give 350ms for progress bar completion before takeoff
       setTimeout(function() {
         const sRect = sourceTitle.getBoundingClientRect();
         const tRect = targetBrand.getBoundingClientRect();
         const tComp = window.getComputedStyle(targetBrand);
 
-        // Kinetic typography glider
         const glider = document.createElement('div');
         glider.className = 'kinetic-glider';
         glider.textContent = 'Nikki Tirta Iwan';
@@ -700,7 +1143,6 @@ function copyEmailToClipboard(e) {
         glider.style.textAlign = 'center';
         document.body.appendChild(glider);
 
-        // Fade out center stage elements smoothly
         sourceTitle.style.opacity = '0';
         const sub = document.querySelector('.estheet-subline');
         const kicker = document.querySelector('.estheet-kicker');
@@ -710,7 +1152,6 @@ function copyEmailToClipboard(e) {
         if (barWrap) barWrap.style.opacity = '0';
         targetBrand.style.opacity = '0';
 
-        // Glide precisely into navigation bar target
         requestAnimationFrame(function() {
           glider.style.fontFamily = tComp.fontFamily;
           glider.style.fontSize = tComp.fontSize;
@@ -749,15 +1190,11 @@ function copyEmailToClipboard(e) {
     img.src = src;
   });
 
-  // Strict safety escape timeout (max 1200ms)
   setTimeout(runGlideTransition, 1200);
 })();
 
-
 /* --------------------------------------------------
    Experience & Background: Reversible Scroll Reveal Controller
-   - Scrolling DOWN: card glides from right to left, transparency 0 -> 100
-   - Scrolling UP: card glides back to the right, transparency 100 -> 0
    -------------------------------------------------- */
 (function() {
   const nodes = document.querySelectorAll('.timeline-node');
@@ -769,7 +1206,6 @@ function copyEmailToClipboard(e) {
         if (entry.isIntersecting) {
           entry.target.classList.add('is-revealed');
         } else {
-          // If the element exits towards the bottom (user scrolled back up), reverse the animation
           if (entry.boundingClientRect.top > 0) {
             entry.target.classList.remove('is-revealed');
           }
@@ -793,14 +1229,8 @@ function copyEmailToClipboard(e) {
 
 /* --------------------------------------------------
    Typography Kinetic Motion Controller
-   (Inspired by Swash Motion & One Page Love Editorial Design)
-   - Scroll-scrub word illumination on .intro-lead (Reversible on scroll up)
-   - Masked kinetic slide-up for section headings (.intro-heading, .section-heading, .footer-heading)
-   - Kinetic tracking expansion for section eyebrows & labels (.intro-eyebrow, .section-label)
-   - Staggered entrance for descriptions (.section-desc, .footer-desc) & spec cards
    -------------------------------------------------- */
 (function() {
-  // 1. Scroll-Scrub Text Illumination (.intro-lead)
   const introLead = document.querySelector('.intro-lead');
   if (introLead) {
     const rawText = introLead.textContent.trim();
@@ -842,52 +1272,34 @@ function copyEmailToClipboard(e) {
     updateScrub();
   }
 
-  // 2. Kinetic Masked Headings
   const headings = document.querySelectorAll('.intro-heading, .section-heading, .footer-heading');
   headings.forEach(function(heading) {
     const innerHtml = heading.innerHTML.trim();
     heading.innerHTML = '<span class="kinetic-heading-mask"><span class="kinetic-heading-inner">' + innerHtml + '</span></span>';
   });
 
-  // 3. Kinetic Eyebrows & Section Labels
   const labels = document.querySelectorAll('.intro-eyebrow, .section-label');
-  labels.forEach(function(l) {
-    l.classList.add('kinetic-label-init');
-  });
+  labels.forEach(function(l) { l.classList.add('kinetic-label-init'); });
 
-  // 4. Section Descriptions
   const descs = document.querySelectorAll('.section-desc, .footer-desc');
-  descs.forEach(function(d) {
-    d.classList.add('kinetic-desc-init');
-  });
+  descs.forEach(function(d) { d.classList.add('kinetic-desc-init'); });
 
-  // 5. Spec & Metric Columns
-  const specCards = document.querySelectorAll('.visage-spec-col, .crisp-card');
-  specCards.forEach(function(c) {
-    c.classList.add('kinetic-card-init');
-  });
-
-  // 6. Reversible IntersectionObserver
   if ('IntersectionObserver' in window) {
     const typographyObserver = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
         const hInner = entry.target.querySelector('.kinetic-heading-inner');
         const isLabel = entry.target.classList.contains('kinetic-label-init');
         const isDesc = entry.target.classList.contains('kinetic-desc-init');
-        const isCard = entry.target.classList.contains('kinetic-card-init');
 
         if (entry.isIntersecting) {
           if (hInner) hInner.classList.add('is-revealed');
           if (isLabel) entry.target.classList.add('is-revealed');
           if (isDesc) entry.target.classList.add('is-revealed');
-          if (isCard) entry.target.classList.add('is-revealed');
         } else {
-          // Reversible on scroll up: only if exiting below the viewport
           if (entry.boundingClientRect.top > 0) {
             if (hInner) hInner.classList.remove('is-revealed');
             if (isLabel) entry.target.classList.remove('is-revealed');
             if (isDesc) entry.target.classList.remove('is-revealed');
-            if (isCard) entry.target.classList.remove('is-revealed');
           }
         }
       });
@@ -900,20 +1312,17 @@ function copyEmailToClipboard(e) {
     headings.forEach(function(h) { typographyObserver.observe(h); });
     labels.forEach(function(l) { typographyObserver.observe(l); });
     descs.forEach(function(d) { typographyObserver.observe(d); });
-    specCards.forEach(function(c) { typographyObserver.observe(c); });
   } else {
-    document.querySelectorAll('.kinetic-heading-inner, .kinetic-label-init, .kinetic-desc-init, .kinetic-card-init').forEach(function(el) {
+    document.querySelectorAll('.kinetic-heading-inner, .kinetic-label-init, .kinetic-desc-init').forEach(function(el) {
       el.classList.add('is-revealed');
     });
   }
 })();
 
-
 /* ==================================================
    Floating AI Assistant Controller (Gemini-Powered)
    ================================================== */
 (function() {
-  // Configured Cloudflare Worker endpoint:
   window.NIKKI_AI_WORKER_URL = 'https://cold-cell-15a6.syltreets.workers.dev/';
 
   const MAX_QUERIES = 8;
@@ -963,7 +1372,6 @@ function copyEmailToClipboard(e) {
     }
   }
 
-  // Secret developer reset: Triple-click avatar in chat header to reset counter
   let avatarClicks = 0;
   let avatarTimer = null;
   window.resetAiCounterDev = function() {
@@ -976,7 +1384,7 @@ function copyEmailToClipboard(e) {
       avatarClicks = 0;
       const counterEl = document.getElementById('aiQueryCounter');
       if (counterEl) {
-        counterEl.textContent = 'Counter reset! (2 remaining)';
+        counterEl.textContent = `Counter reset! (${MAX_QUERIES} remaining)`;
         setTimeout(function() { updateCounterUI(); }, 2000);
       }
     }
@@ -1007,9 +1415,12 @@ function copyEmailToClipboard(e) {
     }
   };
 
-  // Built-in intelligent grounded knowledge responses (Zero-latency fallback)
   function getGroundedResponse(query) {
-    const q = query.toLowerCase();
+    const q = query.toLowerCase().trim();
+
+    if (/^(hi|hello|hey|halo|pagi|siang|sore|malam|yo|sup)\b/.test(q)) {
+      return "Hi! You can ask me specific questions about <strong>Visage Link</strong> (8GB VRAM local voice AI), the <strong>12.6M retail forecasting</strong> benchmark, <strong>SAP S/4HANA &amp; ABAP</strong>, <strong>BorrowIn</strong> (C# .NET / SQL Server), <strong>Argos Club</strong>, or Nikki's background at UMN.";
+    }
 
     if (q.includes('sap') || q.includes('abap') || q.includes('fiori') || q.includes('odata') || q.includes('enterprise')) {
       return "Nikki engineered an enterprise expense analytics solution on <strong>SAP S/4HANA</strong>. He developed custom ABAP Data Provider Classes (<code>DPC_EXT</code>) with dynamic OpenSQL queries to serve transactional data via OData Gateway to an <strong>SAPUI5/Fiori Analytical List Page</strong> with interactive dimension filters.";
@@ -1023,6 +1434,26 @@ function copyEmailToClipboard(e) {
       return "In his retail forecasting project, Nikki analyzed <strong>12.6 million transactions</strong>. His <strong>Facebook Prophet</strong> pipeline achieved an <strong>R² of 0.835</strong>, substantially outperforming a classical SARIMAX baseline and optimizing grocery inventory allocations.";
     }
 
+    if (q.includes('borrowin') || q.includes('library') || q.includes('c#') || q.includes('.net') || q.includes('sql server') || q.includes('rbac')) {
+      return "<strong>BorrowIn</strong> is a layered C# (.NET Framework) &amp; SQL Server library management desktop application with Role-Based Access Control (Admin / Borrower) and automated RDLC inventory reporting.";
+    }
+
+    if (q.includes('argos') || q.includes('proxmox') || q.includes('netbird') || q.includes('workshop')) {
+      return "At <strong>Argos Club UMN</strong> (Comms Member), Nikki supports hands-on workshops guiding 10+ participants through Proxmox VE virtualization, container setup, and NetBird mesh networking.";
+    }
+
+    if (q.includes('bca') || q.includes('autologger') || q.includes('telegram') || q.includes('apps script')) {
+      return "<strong>BCA Autologger</strong> parses bank confirmation emails automatically via Google Apps Script into Google Sheets and sends instant verification alerts through Telegram Bot webhooks.";
+    }
+
+    if (q.includes('skill') || q.includes('stack') || q.includes('tech') || q.includes('language') || q.includes('python') || q.includes('tool')) {
+      return "Nikki works primarily with <strong>Python</strong> (PyTorch, Pandas, Prophet, SARIMAX), <strong>C# (.NET)</strong>, <strong>SQL Server / SQLite</strong>, <strong>ABAP &amp; SAPUI5/Fiori</strong>, <strong>JavaScript</strong>, and local LLM / speech pipelines.";
+    }
+
+    if (q.includes('cert') || q.includes('ibm') || q.includes('badge') || q.includes('credential')) {
+      return "Nikki holds verified <strong>IBM SkillsBuild</strong> credentials including <em>AI Agent for Legal</em> (IBM &amp; Google AI Studio) and <em>AI Literacy</em>, alongside Adobe Learning Manager coursework.";
+    }
+
     if (q.includes('gpa') || q.includes('education') || q.includes('umn') || q.includes('college') || q.includes('role') || q.includes('graduat') || q.includes('hire') || q.includes('work')) {
       return "Nikki is an Information Systems undergraduate at <strong>Universitas Multimedia Nusantara (UMN)</strong>, enrolled August 2024 &ndash; expected August 2028, with an official cumulative GPA of <strong>3.77 / 4.00</strong>. He is actively <strong>Open to Work</strong> for Software Engineering, AI/ML, and Enterprise Systems roles.";
     }
@@ -1031,7 +1462,7 @@ function copyEmailToClipboard(e) {
       return "You can connect with Nikki directly on <a href='https://wa.me/6282239608228' target='_blank' style='color:var(--terracotta);text-decoration:underline;'>WhatsApp (+62 822-3960-8228)</a> or email him at <a href='mailto:nikkiiwan61@gmail.com' style='color:var(--terracotta);text-decoration:underline;'>nikkiiwan61@gmail.com</a>.";
     }
 
-    return "Nikki Tirta Iwan is an Information Systems engineer (GPA 3.77 / 4.00) specializing in Voice AI companions (Visage Link), enterprise architecture (SAP S/4HANA & ABAP), and large-scale time-series forecasting. Feel free to ask about any of his projects or reach him directly!";
+    return "Nikki Tirta Iwan is an Information Systems engineer (GPA 3.77 / 4.00) specializing in Voice AI companions (Visage Link), enterprise architecture (SAP S/4HANA &amp; ABAP), and large-scale time-series forecasting. Feel free to ask about a specific project, tech stack, or his experience at UMN!";
   }
 
   function appendMessage(text, sender) {
@@ -1106,27 +1537,21 @@ function copyEmailToClipboard(e) {
       return;
     }
 
-    // 1. Append user message
     appendMessage(query, 'user');
     inputEl.value = '';
 
-    // 2. Hide prompt chips after first interaction
     const chipsEl = document.getElementById('aiPromptChips');
     if (chipsEl) chipsEl.style.display = 'none';
 
-    // 3. Decrement query usage
-    const used = incrementQueriesUsed();
-
-    // 4. Show typing animation
+    incrementQueriesUsed();
     showTypingIndicator();
 
-    // 5. Query either Cloudflare Worker (Gemini) or grounded engine (with 3.5s strict timeout)
     let botReply = '';
     const workerUrl = window.NIKKI_AI_WORKER_URL;
 
     if (workerUrl && workerUrl.startsWith('http')) {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3500);
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
 
       try {
         const response = await fetch(workerUrl, {
@@ -1139,32 +1564,27 @@ function copyEmailToClipboard(e) {
 
         if (response.ok) {
           const data = await response.json();
-          botReply = data.reply || getGroundedResponse(query);
+          botReply = (data && data.reply) ? data.reply : getGroundedResponse(query);
         } else {
           botReply = getGroundedResponse(query);
         }
       } catch (err) {
         clearTimeout(timeoutId);
-        // Fast fallback to grounded engine if worker is slow or timed out
         botReply = getGroundedResponse(query);
       }
     } else {
-      // Simulate natural thinking delay for grounded response
       await new Promise(r => setTimeout(r, 650));
       botReply = getGroundedResponse(query);
     }
 
-    // 6. Display response
     removeTypingIndicator();
     appendMessage(botReply, 'bot');
 
-    // 7. If reached limit, display contact card
     if (getQueriesRemaining() <= 0) {
       showLimitReachedCard();
     }
   };
 
-  // Close on Escape key
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
       const win = document.getElementById('aiChatWindow');
@@ -1174,7 +1594,6 @@ function copyEmailToClipboard(e) {
     }
   });
 
-  // Initialize UI on DOM load
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', updateCounterUI);
   } else {
