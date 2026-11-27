@@ -641,69 +641,50 @@ body {
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-/* First-Impression Hero Hook (y = 0, fades out cleanly before hands meet) */
-.hero-intro-lockup {
-  position: absolute;
-  top: 32px;
-  left: 48px;
-  z-index: 6;
-  pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.hero-intro-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--terracotta);
-  font-weight: 600;
-  margin-bottom: 4px;
-  text-shadow: 0 1px 12px rgba(216, 205, 183, 0.95);
-}
-
-.hero-intro-sub {
-  font-family: var(--font-serif);
-  font-size: clamp(16px, 1.35vw, 21px);
-  color: var(--text-primary);
-  letter-spacing: -0.01em;
-  text-shadow: 0 1px 16px rgba(216, 205, 183, 0.98);
-}
-
+/* First-Impression Scroll Cue Button (y = 0, fades out cleanly before hands meet) */
 .hero-scroll-cue {
   position: absolute;
   left: 50%;
-  bottom: 22px;
+  bottom: 24px;
   transform: translateX(-50%);
-  z-index: 6;
-  display: flex;
-  flex-direction: column;
+  z-index: 7;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  gap: 10px;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: rgba(247, 239, 225, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(26, 23, 20, 0.16);
+  box-shadow: 0 8px 26px rgba(26, 23, 20, 0.16);
+  cursor: pointer;
+  pointer-events: auto;
+  transition: opacity 0.22s ease, transform 0.22s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.hero-scroll-cue:hover {
+  border-color: var(--terracotta);
+  background: #f7efe1;
 }
 
 .hero-scroll-cue span {
   font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(26, 23, 20, 0.9);
-  text-shadow:
-    0 0 14px rgba(247, 239, 225, 1),
-    0 0 6px rgba(247, 239, 225, 1),
-    0 1px 2px rgba(247, 239, 225, 0.95);
+  color: var(--text-primary);
 }
 
 .hero-scroll-thread {
   display: block;
-  width: 1px;
-  height: 26px;
-  background: linear-gradient(to bottom, var(--terracotta), transparent);
+  width: 2px;
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(to bottom, var(--terracotta), rgba(140, 72, 48, 0.2));
   transform-origin: top center;
-  animation: scrollThreadPulse 2.1s ease-in-out infinite;
+  animation: scrollThreadPulse 1.9s ease-in-out infinite;
 }
 
 @keyframes scrollThreadPulse {
@@ -3762,10 +3743,6 @@ body {
 }
 
 @media (max-width: 768px) {
-  .hero-intro-lockup {
-    top: 18px;
-    left: 20px;
-  }
   .exhibit-media-frame {
     aspect-ratio: 4 / 3;
   }

@@ -147,7 +147,6 @@ window.navigateToAnchor = function(selector) {
   const sparkRing = document.getElementById('heroSparkRing');
   const spotlight = document.getElementById('heroSpotlight');
   const plaque = document.getElementById('heroPlaque');
-  const introLockup = document.getElementById('heroIntroLockup');
   const scrollCue = document.getElementById('heroScrollCue');
   const fluidCanvas = document.getElementById('heroFluidCanvas');
   const synapseCanvas = document.getElementById('heroSynapseCanvas');
@@ -345,15 +344,21 @@ window.navigateToAnchor = function(selector) {
     }
 
     const introFade = Math.max(0, 1 - progress / 0.24);
-    if (introLockup) {
-      introLockup.style.opacity = introFade.toFixed(2);
-      introLockup.style.transform = 'translate3d(0, ' + (-progress * 26).toFixed(1) + 'px, 0)';
-    }
     if (scrollCue) {
       scrollCue.style.opacity = introFade.toFixed(2);
       scrollCue.style.transform = 'translate(-50%, ' + (progress * 18).toFixed(1) + 'px)';
+      scrollCue.style.pointerEvents = introFade > 0.1 ? 'auto' : 'none';
     }
   }
+
+  window.scrollHeroStart = function() {
+    const targetY = (runway.offsetHeight - window.innerHeight) * 0.75;
+    if (window.lenis) {
+      window.lenis.scrollTo(targetY, { duration: 1.4 });
+    } else {
+      window.scrollTo({ top: targetY, behavior: 'smooth' });
+    }
+  };
 
   function getProgress() {
     const rect = runway.getBoundingClientRect();
