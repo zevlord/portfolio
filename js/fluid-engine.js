@@ -467,8 +467,9 @@
     }, { passive: true });
     target.addEventListener('click', (e) => {
       if (!state.motionEnabled) return;
-      // Avoid hijacking interactive button/link clicks
+      // Avoid hijacking interactive button/link clicks or duplicating long-hold discharges
       if (e.target && e.target.closest && e.target.closest('a, button, input')) return;
+      if (Date.now() - Number(target.dataset.heldAt || 0) < 200) return;
       const rect = canvas.getBoundingClientRect();
       if (!rect.width || !rect.height) return;
       const nx = (e.clientX - rect.left) / rect.width;

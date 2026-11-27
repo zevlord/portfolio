@@ -147,6 +147,8 @@ window.navigateToAnchor = function(selector) {
   const sparkRing = document.getElementById('heroSparkRing');
   const spotlight = document.getElementById('heroSpotlight');
   const plaque = document.getElementById('heroPlaque');
+  const introLockup = document.getElementById('heroIntroLockup');
+  const scrollCue = document.getElementById('heroScrollCue');
   const fluidCanvas = document.getElementById('heroFluidCanvas');
   const synapseCanvas = document.getElementById('heroSynapseCanvas');
 
@@ -186,41 +188,89 @@ window.navigateToAnchor = function(selector) {
   let depthRafId = null;
   let hasContactBurst = false;
 
+  const holdState = { active: false, px: 0, py: 0, nx: 0.5, ny: 0.5, start: 0, rafId: null };
+
   function drawSynapseArcs(progress) {
     if (!synCtx || !synapseCanvas) return;
     synCtx.clearRect(0, 0, synapseCanvas.width, synapseCanvas.height);
-    if (!motionEnabled || progress < 0.65 || progress > 0.92) return;
+    if (!motionEnabled) return;
 
-    const strength = Math.sin(((progress - 0.65) / 0.27) * Math.PI);
-    const cx = synapseCanvas.width * 0.5;
-    const cy = synapseCanvas.height * 0.45;
-    const spread = 18 + (1 - Math.min(1, Math.abs(progress - 0.75) * 8)) * 34;
+    if (progress >= 0.65 && progress <= 0.92) {
+      const strength = Math.sin(((progress - 0.65) / 0.27) * Math.PI);
+      const cx = synapseCanvas.width * 0.5;
+      const cy = synapseCanvas.height * 0.45;
+      const spread = 18 + (1 - Math.min(1, Math.abs(progress - 0.75) * 8)) * 34;
 
-    synCtx.save();
-    for (let a = 0; a < 5; a++) {
-      const angleOffset = (a - 2) * 0.42 + Math.sin(performance.now() * 0.005 + a) * 0.25;
-      const sx = cx - spread * Math.cos(angleOffset * 0.5);
-      const ex = cx + spread * Math.cos(angleOffset * 0.5);
-      const sy = cy + Math.sin(angleOffset) * 14;
-      const ey = cy - Math.sin(angleOffset) * 14;
+      synCtx.save();
+      for (let a = 0; a < 5; a++) {
+        const angleOffset = (a - 2) * 0.42 + Math.sin(performance.now() * 0.005 + a) * 0.25;
+        const sx = cx - spread * Math.cos(angleOffset * 0.5);
+        const ex = cx + spread * Math.cos(angleOffset * 0.5);
+        const sy = cy + Math.sin(angleOffset) * 14;
+        const ey = cy - Math.sin(angleOffset) * 14;
 
-      synCtx.beginPath();
-      synCtx.moveTo(sx, sy);
-      const steps = 6;
-      for (let s = 1; s < steps; s++) {
-        const t = s / steps;
-        const px = sx + (ex - sx) * t;
-        const py = sy + (ey - sy) * t + (Math.random() - 0.5) * 11 * strength;
-        synCtx.lineTo(px, py);
+        synCtx.beginPath();
+        synCtx.moveTo(sx, sy);
+        const steps = 6;
+        for (let s = 1; s < steps; s++) {
+          const t = s / steps;
+          const px = sx + (ex - sx) * t;
+          const py = sy + (ey - sy) * t + (Math.random() - 0.5) * 11 * strength;
+          synCtx.lineTo(px, py);
+        }
+        synCtx.lineTo(ex, ey);
+        synCtx.strokeStyle = a % 2 === 0
+          ? `rgba(247, 239, 225, ${(0.55 * strength).toFixed(2)})`
+          : `rgba(140, 72, 48, ${(0.72 * strength).toFixed(2)})`;
+        synCtx.lineWidth = a === 2 ? 1.5 : 0.9;
+        synCtx.stroke();
       }
-      synCtx.lineTo(ex, ey);
-      synCtx.strokeStyle = a % 2 === 0
-        ? `rgba(247, 239, 225, ${(0.55 * strength).toFixed(2)})`
-        : `rgba(140, 72, 48, ${(0.72 * strength).toFixed(2)})`;
-      synCtx.lineWidth = a === 2 ? 1.5 : 0.9;
-      synCtx.stroke();
+      synCtx.restore();
     }
-    synCtx.restore();
+
+    // Draw interactive "Hold to Discharge" buildup under cursor
+    if (holdState.active) {
+      const charge = Math.min(1, (performance.now() - holdState.start) / 850);
+      if (charge > 0.04) {
+        synCtx.save();
+        const r = 10 + charge * 42;
+        const grad = synCtx.createRadialGradient(holdState.px, holdState.py, 1, holdState.px, holdState.py, r * 1.4);
+        grad.addColorStop(0, `rgba(247, 239, 225, ${(0.55 * charge).toFixed(2)})`);
+        grad.addColorStop(0.5, `rgba(140, 72, 48, ${(0.38 * charge).toFixed(2)})`);
+        grad.addColorStop(1, 'rgba(140, 72, 48, 0)');
+        synCtx.fillStyle = grad;
+        synCtx.beginPath();
+        synCtx.arc(holdState.px, holdState.py, r * 1.4, 0, Math.PI * 2);
+        synCtx.fill();
+
+        synCtx.strokeStyle = `rgba(140, 72, 48, ${(0.3 + charge * 0.6).toFixed(2)})`;
+        synCtx.lineWidth = 1.25;
+        synCtx.beginPath();
+        synCtx.arc(holdState.px, holdState.py, r * 0.65, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * charge);
+        synCtx.stroke();
+
+        for (let k = 0; k < 4; k++) {
+          const ang = (performance.now() * 0.006) + (k * Math.PI * 0.5);
+          const dist = r * (0.85 + Math.random() * 0.35);
+          synCtx.beginPath();
+          synCtx.moveTo(holdState.px + Math.cos(ang) * dist, holdState.py + Math.sin(ang) * dist);
+          synCtx.lineTo(holdState.px + Math.cos(ang + 0.25) * 4, holdState.py + Math.sin(ang + 0.25) * 4);
+          synCtx.strokeStyle = `rgba(247, 239, 225, ${(0.65 * charge).toFixed(2)})`;
+          synCtx.lineWidth = 0.9;
+          synCtx.stroke();
+        }
+        synCtx.restore();
+      }
+    }
+  }
+
+  function tickHoldCharge() {
+    if (!holdState.active) {
+      holdState.rafId = null;
+      return;
+    }
+    drawSynapseArcs(getProgress());
+    holdState.rafId = window.requestAnimationFrame(tickHoldCharge);
   }
 
   function applyTransforms(progress) {
@@ -293,6 +343,16 @@ window.navigateToAnchor = function(selector) {
         plaque.style.pointerEvents = 'none';
       }
     }
+
+    const introFade = Math.max(0, 1 - progress / 0.24);
+    if (introLockup) {
+      introLockup.style.opacity = introFade.toFixed(2);
+      introLockup.style.transform = 'translate3d(0, ' + (-progress * 26).toFixed(1) + 'px, 0)';
+    }
+    if (scrollCue) {
+      scrollCue.style.opacity = introFade.toFixed(2);
+      scrollCue.style.transform = 'translate(-50%, ' + (progress * 18).toFixed(1) + 'px)';
+    }
   }
 
   function getProgress() {
@@ -357,11 +417,59 @@ window.navigateToAnchor = function(selector) {
       pointerActive = false;
       targetNx = 0;
       targetNy = 0;
+      if (holdState.active) {
+        holdState.active = false;
+        drawSynapseArcs(getProgress());
+      }
       if (spotlight) spotlight.classList.remove('is-active');
       if (!depthRafId) {
         depthRafId = window.requestAnimationFrame(stepDepthLerp);
       }
     }, { passive: true });
+
+    function beginHold(clientX, clientY, targetEl) {
+      if (!motionEnabled) return;
+      if (targetEl && targetEl.closest && targetEl.closest('a, button, input')) return;
+      const rect = stage.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      holdState.active = true;
+      holdState.px = clientX - rect.left;
+      holdState.py = clientY - rect.top;
+      holdState.nx = holdState.px / rect.width;
+      holdState.ny = holdState.py / rect.height;
+      holdState.start = performance.now();
+      if (!holdState.rafId) tickHoldCharge();
+    }
+
+    function updateHoldPos(clientX, clientY) {
+      if (!holdState.active) return;
+      const rect = stage.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      holdState.px = clientX - rect.left;
+      holdState.py = clientY - rect.top;
+      holdState.nx = holdState.px / rect.width;
+      holdState.ny = holdState.py / rect.height;
+    }
+
+    function releaseHold() {
+      if (!holdState.active) return;
+      const heldMs = performance.now() - holdState.start;
+      const charge = Math.min(1, heldMs / 850);
+      holdState.active = false;
+      drawSynapseArcs(getProgress());
+      if (heldMs >= 160 && heroFluid) {
+        stage.dataset.heldAt = String(Date.now());
+        heroFluid.burstAt(holdState.nx, 1.0 - holdState.ny, 1.15 + charge * 1.35);
+      }
+    }
+
+    stage.addEventListener('mousedown', (e) => { if (e.button === 0) beginHold(e.clientX, e.clientY, e.target); }, { passive: true });
+    stage.addEventListener('mousemove', (e) => updateHoldPos(e.clientX, e.clientY), { passive: true });
+    window.addEventListener('mouseup', releaseHold, { passive: true });
+    stage.addEventListener('touchstart', (e) => {
+      if (e.touches && e.touches[0]) beginHold(e.touches[0].clientX, e.touches[0].clientY, e.target);
+    }, { passive: true });
+    window.addEventListener('touchend', releaseHold, { passive: true });
   }
 
   window.addEventListener('scroll', onScroll, { passive: true });
@@ -642,37 +750,315 @@ window.closeCaseStudyModal = function() {
   }
 })();
 
-// Play/Pause Visage Link Video Demo
+// Custom Editorial Visage Video HUD Controller
+function formatVideoTime(sec) {
+  if (!isFinite(sec) || sec < 0) return '0:00';
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return m + ':' + (s < 10 ? '0' : '') + s;
+}
+
+function syncVisagePlayUI(isPlaying) {
+  const slide0 = document.getElementById('exhibitSlide0');
+  const btn = document.getElementById('visagePlayBtn');
+  const hudPlay = document.getElementById('visageHudPlay');
+  if (slide0) {
+    slide0.classList.toggle('is-playing', isPlaying);
+    slide0.setAttribute('data-cursor', isPlaying ? 'Pause' : 'Play');
+  }
+  if (btn) {
+    btn.innerHTML = isPlaying
+      ? '<span>Pause Voice Demo</span><span>&#10074;&#10074;</span>'
+      : '<span>Play Japanese Demo</span><span>&#9658;</span>';
+  }
+  if (hudPlay) {
+    hudPlay.innerHTML = isPlaying ? '&#10074;&#10074;' : '&#9658;';
+  }
+}
+
 function playVisageDemo(e) {
   if (e) e.preventDefault();
   const vid = document.getElementById('visageVideo');
-  const btn = document.getElementById('visagePlayBtn');
-  if (vid) {
-    if (vid.paused) {
-      vid.play();
-      if (btn) btn.innerHTML = '<span>Pause Voice Demo</span><span>&#10074;&#10074;</span>';
-    } else {
-      vid.pause();
-      if (btn) btn.innerHTML = '<span>Play Japanese Demo</span><span>&#9658;</span>';
-    }
+  if (!vid) return;
+  if (vid.paused) {
+    vid.play().catch(function() {});
+  } else {
+    vid.pause();
   }
+}
+
+function toggleVisageMute(e) {
+  if (e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  const vid = document.getElementById('visageVideo');
+  const muteBtn = document.getElementById('visageHudMute');
+  if (!vid) return;
+  vid.muted = !vid.muted;
+  if (muteBtn) muteBtn.textContent = vid.muted ? 'MUTE' : 'VOL';
 }
 
 document.addEventListener('DOMContentLoaded', function() {
   const vid = document.getElementById('visageVideo');
-  const btn = document.getElementById('visagePlayBtn');
-  if (vid && btn) {
-    vid.addEventListener('ended', function() {
-      btn.innerHTML = '<span>Play Japanese Demo</span><span>&#9658;</span>';
-    });
-    vid.addEventListener('pause', function() {
-      btn.innerHTML = '<span>Play Japanese Demo</span><span>&#9658;</span>';
-    });
-    vid.addEventListener('play', function() {
-      btn.innerHTML = '<span>Pause Voice Demo</span><span>&#10074;&#10074;</span>';
-    });
+  const track = document.getElementById('visageHudTrack');
+  const fill = document.getElementById('visageHudFill');
+  const timeEl = document.getElementById('visageHudTime');
+  if (vid) {
+    const updateHudTime = function() {
+      const dur = vid.duration || 8;
+      const cur = vid.currentTime || 0;
+      if (fill) fill.style.width = Math.min(100, (cur / dur) * 100).toFixed(2) + '%';
+      if (timeEl) timeEl.textContent = formatVideoTime(cur) + ' / ' + formatVideoTime(dur);
+    };
+    vid.addEventListener('loadedmetadata', updateHudTime);
+    vid.addEventListener('timeupdate', updateHudTime);
+    vid.addEventListener('ended', function() { syncVisagePlayUI(false); });
+    vid.addEventListener('pause', function() { syncVisagePlayUI(false); });
+    vid.addEventListener('play', function() { syncVisagePlayUI(true); });
+
+    if (track) {
+      let dragging = false;
+      const seekFromEvent = function(clientX) {
+        const rect = track.getBoundingClientRect();
+        if (!rect.width || !vid.duration) return;
+        const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+        vid.currentTime = ratio * vid.duration;
+        updateHudTime();
+      };
+      track.addEventListener('mousedown', function(ev) {
+        ev.stopPropagation();
+        dragging = true;
+        seekFromEvent(ev.clientX);
+      });
+      window.addEventListener('mousemove', function(ev) {
+        if (dragging) seekFromEvent(ev.clientX);
+      }, { passive: true });
+      window.addEventListener('mouseup', function() { dragging = false; }, { passive: true });
+    }
   }
+
+  initForecastChart();
+  initArchCursor();
 });
+
+/* ==================================================
+   Interactive Forecasting Benchmark SVG Chart (Slide 1)
+   ================================================== */
+const forecastSeriesData = [
+  { w: 'W01', actual: 412, prophet: 418, sarimax: 435 },
+  { w: 'W02', actual: 438, prophet: 432, sarimax: 448 },
+  { w: 'W03', actual: 465, prophet: 460, sarimax: 452 },
+  { w: 'W04', actual: 446, prophet: 451, sarimax: 464 },
+  { w: 'W05', actual: 492, prophet: 486, sarimax: 468 },
+  { w: 'W06', actual: 528, prophet: 519, sarimax: 475 },
+  { w: 'W07', actual: 545, prophet: 538, sarimax: 484 },
+  { w: 'W08', actual: 504, prophet: 512, sarimax: 492 },
+  { w: 'W09', actual: 562, prophet: 554, sarimax: 505 },
+  { w: 'W10', actual: 590, prophet: 583, sarimax: 512 },
+  { w: 'W11', actual: 572, prophet: 578, sarimax: 518 },
+  { w: 'W12', actual: 618, prophet: 608, sarimax: 526 },
+];
+let forecastChartMode = 'both';
+
+function setForecastChartMode(mode, btn) {
+  forecastChartMode = mode;
+  document.querySelectorAll('.fc-filter-btn').forEach(b => b.classList.toggle('is-active', b === btn));
+  initForecastChart();
+}
+
+function initForecastChart() {
+  const svg = document.getElementById('forecastChartSvg');
+  const wrap = document.getElementById('forecastSvgWrap');
+  const tooltip = document.getElementById('forecastTooltip');
+  if (!svg) return;
+
+  const W = 600, H = 220, padL = 34, padR = 14, padT = 16, padB = 26;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+  const minY = 390, maxY = 640;
+
+  const px = (i) => padL + (i / (forecastSeriesData.length - 1)) * plotW;
+  const py = (v) => padT + (1 - (v - minY) / (maxY - minY)) * plotH;
+  const linePts = (key) => forecastSeriesData.map((d, i) => `${px(i).toFixed(1)},${py(d[key]).toFixed(1)}`).join(' ');
+
+  let markup = '';
+  // Subtle grid lines
+  [420, 490, 560, 620].forEach(val => {
+    const y = py(val).toFixed(1);
+    markup += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="rgba(247,239,225,0.08)" stroke-width="1"/>`;
+    markup += `<text x="${padL - 6}" y="${Number(y) + 3}" fill="#8a8276" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="end">${val}k</text>`;
+  });
+
+  // Week labels
+  forecastSeriesData.forEach((d, i) => {
+    if (i % 2 === 0 || i === forecastSeriesData.length - 1) {
+      markup += `<text x="${px(i).toFixed(1)}" y="${H - 6}" fill="#8a8276" font-family="IBM Plex Mono, monospace" font-size="9" text-anchor="middle">${d.w}</text>`;
+    }
+  });
+
+  // Observed actual subtle dashed line
+  markup += `<polyline fill="none" stroke="rgba(247,239,225,0.42)" stroke-width="1.5" stroke-dasharray="3 3" points="${linePts('actual')}"/>`;
+
+  if (forecastChartMode === 'both' || forecastChartMode === 'sarimax') {
+    markup += `<polyline fill="none" stroke="#8da2b0" stroke-width="2.2" points="${linePts('sarimax')}"/>`;
+  }
+  if (forecastChartMode === 'both' || forecastChartMode === 'prophet') {
+    const firstX = px(0).toFixed(1);
+    const lastX = px(forecastSeriesData.length - 1).toFixed(1);
+    const base = (H - padB).toFixed(1);
+    markup += `<polygon fill="rgba(224,122,95,0.14)" points="${firstX},${base} ${linePts('prophet')} ${lastX},${base}"/>`;
+    markup += `<polyline fill="none" stroke="#e07a5f" stroke-width="2.6" points="${linePts('prophet')}"/>`;
+  }
+
+  markup += `<line id="fcCrosshair" x1="0" y1="${padT}" x2="0" y2="${H - padB}" stroke="rgba(247,239,225,0.45)" stroke-width="1" opacity="0"/>`;
+  markup += `<circle id="fcDotActual" cx="0" cy="0" r="3.5" fill="#f7efe1" opacity="0"/>`;
+  markup += `<circle id="fcDotProphet" cx="0" cy="0" r="4.5" fill="#e07a5f" stroke="#f7efe1" stroke-width="1.2" opacity="0"/>`;
+  markup += `<circle id="fcDotSarimax" cx="0" cy="0" r="4" fill="#8da2b0" stroke="#f7efe1" stroke-width="1.2" opacity="0"/>`;
+  svg.innerHTML = markup;
+
+  if (!wrap || wrap.dataset.bound === '1') return;
+  wrap.dataset.bound = '1';
+
+  const onMove = function(clientX) {
+    const rect = svg.getBoundingClientRect();
+    if (!rect.width) return;
+    const relX = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    const svgX = relX * W;
+    const norm = Math.max(0, Math.min(1, (svgX - padL) / plotW));
+    const idx = Math.round(norm * (forecastSeriesData.length - 1));
+    const d = forecastSeriesData[idx];
+    const cx = px(idx);
+
+    const cross = document.getElementById('fcCrosshair');
+    const da = document.getElementById('fcDotActual');
+    const dp = document.getElementById('fcDotProphet');
+    const ds = document.getElementById('fcDotSarimax');
+    if (cross) { cross.setAttribute('x1', cx); cross.setAttribute('x2', cx); cross.setAttribute('opacity', '1'); }
+    if (da) { da.setAttribute('cx', cx); da.setAttribute('cy', py(d.actual)); da.setAttribute('opacity', '1'); }
+    if (dp) {
+      const showP = forecastChartMode !== 'sarimax';
+      dp.setAttribute('cx', cx); dp.setAttribute('cy', py(d.prophet)); dp.setAttribute('opacity', showP ? '1' : '0');
+    }
+    if (ds) {
+      const showS = forecastChartMode !== 'prophet';
+      ds.setAttribute('cx', cx); ds.setAttribute('cy', py(d.sarimax)); ds.setAttribute('opacity', showS ? '1' : '0');
+    }
+    if (tooltip) {
+      let html = `<strong>${d.w}</strong> · Actual: ${d.actual}k`;
+      if (forecastChartMode !== 'sarimax') html += `<br><span style="color:#8c4830">Prophet: ${d.prophet}k</span>`;
+      if (forecastChartMode !== 'prophet') html += `<br><span style="color:#4a5d6a">SARIMAX: ${d.sarimax}k</span>`;
+      tooltip.innerHTML = html;
+      const tipX = Math.min(rect.width - 138, Math.max(10, (cx / W) * rect.width + 12));
+      tooltip.style.left = tipX.toFixed(0) + 'px';
+      tooltip.classList.add('is-visible');
+    }
+  };
+
+  wrap.addEventListener('mousemove', (e) => onMove(e.clientX), { passive: true });
+  wrap.addEventListener('touchmove', (e) => {
+    if (e.touches && e.touches[0]) onMove(e.touches[0].clientX);
+  }, { passive: true });
+  wrap.addEventListener('mouseleave', () => {
+    ['fcCrosshair', 'fcDotActual', 'fcDotProphet', 'fcDotSarimax'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.setAttribute('opacity', '0');
+    });
+    if (tooltip) tooltip.classList.remove('is-visible');
+  }, { passive: true });
+}
+
+/* ==================================================
+   Custom Architectural Cursor (Desktop Fine Pointers)
+   ================================================== */
+function initArchCursor() {
+  const cursor = document.getElementById('archCursor');
+  const dot = document.getElementById('archCursorDot');
+  const labelEl = document.getElementById('archCursorLabel');
+  if (!cursor || !window.matchMedia || !window.matchMedia('(pointer: fine) and (hover: hover)').matches) return;
+
+  let tx = -100, ty = -100, cx = -100, cy = -100, active = false, pressed = false, rafId = null;
+
+  function step() {
+    rafId = null;
+    const dx = tx - cx;
+    const dy = ty - cy;
+    cx += dx * 0.2;
+    cy += dy * 0.2;
+    const ringScale = pressed ? 0.82 : 1;
+    cursor.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0) translate(-50%, -50%) scale(${ringScale})`;
+    if (active && (Math.abs(dx) > 0.25 || Math.abs(dy) > 0.25)) {
+      rafId = window.requestAnimationFrame(step);
+    }
+  }
+
+  document.addEventListener('mousemove', function(e) {
+    tx = e.clientX;
+    ty = e.clientY;
+    if (!active) {
+      cx = tx;
+      cy = ty;
+      active = true;
+      document.documentElement.classList.add('has-custom-cursor');
+      cursor.classList.add('is-visible');
+      if (dot) dot.classList.add('is-visible');
+    }
+    if (dot) {
+      dot.style.transform = `translate3d(${tx}px, ${ty}px, 0) translate(-50%, -50%)`;
+    }
+
+    const nativeZone = e.target && e.target.closest ? e.target.closest('input, textarea, iframe') : null;
+    if (nativeZone) {
+      cursor.classList.add('is-hidden');
+      if (dot) dot.classList.add('is-hidden');
+    } else {
+      cursor.classList.remove('is-hidden');
+      if (dot) dot.classList.remove('is-hidden');
+    }
+
+    const labelTarget = e.target && e.target.closest ? e.target.closest('[data-cursor]') : null;
+    const hoverTarget = e.target && e.target.closest ? e.target.closest('[data-cursor], a, button, .work-rail-item, .cert-pill-item, .exp-card__media-preview') : null;
+    const labelText = labelTarget ? labelTarget.getAttribute('data-cursor') : '';
+
+    if (labelText && !nativeZone) {
+      cursor.classList.add('is-labeled');
+      cursor.classList.remove('is-hover');
+      if (dot) { dot.classList.add('is-labeled'); dot.classList.remove('is-hover'); }
+      if (labelEl) labelEl.textContent = labelText;
+    } else if (hoverTarget && !nativeZone) {
+      cursor.classList.add('is-hover');
+      cursor.classList.remove('is-labeled');
+      if (dot) { dot.classList.add('is-hover'); dot.classList.remove('is-labeled'); }
+    } else {
+      cursor.classList.remove('is-hover', 'is-labeled');
+      if (dot) dot.classList.remove('is-hover', 'is-labeled');
+    }
+
+    if (!rafId) rafId = window.requestAnimationFrame(step);
+  }, { passive: true });
+
+  document.addEventListener('mousedown', function() {
+    pressed = true;
+    cursor.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0) translate(-50%, -50%) scale(0.82)`;
+  }, { passive: true });
+
+  window.addEventListener('mouseup', function() {
+    pressed = false;
+    cursor.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0) translate(-50%, -50%) scale(1)`;
+  }, { passive: true });
+
+  document.addEventListener('mouseleave', function() {
+    active = false;
+    cursor.classList.remove('is-visible', 'is-hover', 'is-labeled');
+    if (dot) dot.classList.remove('is-visible', 'is-hover', 'is-labeled');
+  }, { passive: true });
+
+  document.addEventListener('touchstart', function() {
+    document.documentElement.classList.remove('has-custom-cursor');
+    cursor.classList.remove('is-visible');
+    if (dot) dot.classList.remove('is-visible');
+  }, { passive: true });
+}
 
 function switchVisageTab(tab) {
   const tabs = ['specs', 'stream', 'memory', 'osc'];

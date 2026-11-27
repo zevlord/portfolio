@@ -171,11 +171,21 @@
         <div id="heroSparkRing" class="hero-spark-ring" aria-hidden="true"></div>
         <div id="heroSpark" class="hero-spark" aria-hidden="true"></div>
 
-        <!-- Layer 6: Unboxed Connecting With Technology Title (Difference/Ink Interaction) -->
+        <!-- Layer 6: Landing Editorial Hook & Convergence Title -->
+        <div id="heroIntroLockup" class="hero-intro-lockup" aria-hidden="true">
+          <div class="hero-intro-eyebrow">00 &mdash; Engineering Portfolio</div>
+          <div class="hero-intro-sub">AI Systems &middot; Data Pipelines &middot; Enterprise SAP</div>
+        </div>
+
         <div id="heroPlaque" class="hero-plaque">
           <h1 class="plaque-title">
             Connecting With Technology
           </h1>
+        </div>
+
+        <div id="heroScrollCue" class="hero-scroll-cue" aria-hidden="true">
+          <span>Scroll to Connect</span>
+          <i class="hero-scroll-thread"></i>
         </div>
 
         <!-- Hero Quick Jump Pill -->
@@ -338,41 +348,75 @@
             </article>
           </div>
 
-          <!-- Right: Interactive Shader-Rippled Visual Stage -->
+          <!-- Right: Bespoke Interactive Visual Stage -->
           <div class="exhibit-media-stage" id="exhibitMediaStage">
             <div class="exhibit-media-frame" id="exhibitMediaFrame">
-              <!-- Slide 0: Visage Link Video -->
-              <div class="exhibit-slide is-active" id="exhibitSlide0">
+              <!-- Slide 0: Visage Link Custom Video Player -->
+              <div class="exhibit-slide is-active" id="exhibitSlide0" data-cursor="Play">
                 <video
                   id="visageVideo"
                   src="assets/visage-link-demo.mp4"
                   poster="assets/visage-link.jpg"
                   preload="metadata"
                   playsinline
-                  controls
+                  onclick="playVisageDemo(event)"
                 >
                   Your browser does not support the video tag.
                 </video>
+                <div class="video-hud" id="visageHud">
+                  <button type="button" class="video-hud__btn" id="visageHudPlay" onclick="playVisageDemo(event)" aria-label="Play or pause demo">&#9658;</button>
+                  <div class="video-hud__track" id="visageHudTrack" role="slider" aria-label="Seek video">
+                    <div class="video-hud__fill" id="visageHudFill"></div>
+                  </div>
+                  <span class="video-hud__time" id="visageHudTime">0:00 / 0:08</span>
+                  <button type="button" class="video-hud__btn video-hud__btn--mute" id="visageHudMute" onclick="toggleVisageMute(event)" aria-label="Mute or unmute audio">VOL</button>
+                </div>
               </div>
 
-              <!-- Slide 1: Retail Forecasting -->
-              <div class="exhibit-slide" id="exhibitSlide1">
+              <!-- Slide 1: Retail Forecasting Interactive Model Explorer -->
+              <div class="exhibit-slide exhibit-slide--forecast" id="exhibitSlide1">
                 <img
                   id="forecastImg"
+                  class="forecast-backdrop-img"
                   src="assets/retail-forecasting.jpg"
                   alt="12.6M Retail Transaction Time-Series Forecasting Visual"
                   loading="eager"
                 >
+                <div class="forecast-chart-box" id="forecastChartBox">
+                  <div class="forecast-chart-head">
+                    <div class="forecast-chart-title">
+                      <span class="fc-dot fc-dot--prophet"></span>
+                      <span>Prophet <strong>R&sup2; 0.835</strong></span>
+                      <span class="fc-dot fc-dot--sarimax"></span>
+                      <span>SARIMAX <strong>R&sup2; 0.485</strong></span>
+                    </div>
+                    <div class="forecast-chart-filters">
+                      <button type="button" class="fc-filter-btn is-active" data-series="both" onclick="setForecastChartMode('both', this)">Both</button>
+                      <button type="button" class="fc-filter-btn" data-series="prophet" onclick="setForecastChartMode('prophet', this)">Prophet</button>
+                      <button type="button" class="fc-filter-btn" data-series="sarimax" onclick="setForecastChartMode('sarimax', this)">SARIMAX</button>
+                    </div>
+                  </div>
+
+                  <div class="forecast-svg-wrap" id="forecastSvgWrap">
+                    <svg id="forecastChartSvg" class="forecast-svg" viewBox="0 0 600 220" preserveAspectRatio="xMidYMid meet" aria-label="Interactive Prophet vs SARIMAX weekly forecast comparison"></svg>
+                    <div class="forecast-tooltip" id="forecastTooltip" aria-hidden="true"></div>
+                  </div>
+
+                  <div class="forecast-chart-foot">
+                    <span>IS388 &middot; 12.6M+ Retail Rows &middot; Illustrative Weekly Trajectory</span>
+                  </div>
+                </div>
               </div>
 
               <!-- Slide 2: SAP Fiori Dashboard -->
-              <div class="exhibit-slide" id="exhibitSlide2" onclick="openImageModal('assets/sap-fiori-dashboard.png', 'SAP Fiori — Monthly Office Supply Expense Analytics', 'Executive Expenditure Dashboard running on SAP S/4HANA with smart filter bar, active department chips, and interactive analytical ledger')" style="cursor: pointer;">
+              <div class="exhibit-slide" id="exhibitSlide2" data-cursor="Inspect" onclick="openImageModal('assets/sap-fiori-dashboard.png', 'SAP Fiori — Monthly Office Supply Expense Analytics', 'Executive Expenditure Dashboard running on SAP S/4HANA with smart filter bar, active department chips, and interactive analytical ledger')" style="cursor: pointer;">
                 <img
                   id="sapDashboardImg"
                   src="assets/sap-fiori-dashboard.png"
                   alt="SAP S/4HANA Monthly Office Supply Expense Analytics Dashboard"
                   loading="eager"
                 >
+                <span class="exhibit-inspect-badge">Inspect Fullscreen &nearr;</span>
               </div>
             </div>
           </div>
@@ -406,7 +450,7 @@
       <div class="section-label">04 &mdash; Experience &amp; Background</div>
       <h2 class="section-heading">Engineering projects, campus leadership, and verified credentials.</h2>
       <p class="section-desc">
-        This section shows documentation of my hands-on work across local AI systems, time-series forecasting, relational databases, enterprise ERP, and campus organization.
+        This section shows documentation of my other notable project besides the one shown above and my participation in campus organization.
       </p>
 
       <div class="timeline-layout">
@@ -702,7 +746,7 @@
     </p>
 
     <div class="footer-contacts">
-      <a class="footer-contact-item" href="mailto:nikkiiwan61@gmail.com" onclick="copyEmailToClipboard(event)"><span>nikkiiwan61@gmail.com</span> <span style="font-family: var(--font-mono); font-size: 11px; opacity: 0.7; margin-left: 4px;">[Copy]</span></a>
+      <a class="footer-contact-item" data-cursor="Copy" href="mailto:nikkiiwan61@gmail.com" onclick="copyEmailToClipboard(event)"><span>nikkiiwan61@gmail.com</span> <span style="font-family: var(--font-mono); font-size: 11px; opacity: 0.7; margin-left: 4px;">[Copy]</span></a>
       <a class="footer-contact-item" href="https://linkedin.com/in/nikki-iwan-12a774324" target="_blank" rel="noopener">LinkedIn &rarr;</a>
       <a class="footer-contact-item" href="https://github.com/zevlord" target="_blank" rel="noopener">GitHub &rarr;</a>
       <a class="footer-contact-item" href="https://wa.me/6282239608228" target="_blank" rel="noopener" aria-label="Chat on WhatsApp (+62 822-3960-8228)">
@@ -1141,6 +1185,12 @@ cursor.execute(<span style="color:#a8c97f;">"""
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
   <span>Copied nikkiiwan61@gmail.com to clipboard</span>
 </div>
+
+<!-- Custom Architectural Cursor (Desktop Fine Pointers Only) -->
+<div id="archCursor" class="arch-cursor" aria-hidden="true">
+  <span id="archCursorLabel" class="arch-cursor__label"></span>
+</div>
+<div id="archCursorDot" class="arch-cursor-dot" aria-hidden="true"></div>
 
 </body>
 </html>
